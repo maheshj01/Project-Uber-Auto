@@ -2,6 +2,9 @@
     <string name="app_name">UberAuto</string>
     <string name="phone_no">phone no</string>
     <string name="sign_in">Sign In</string>
+    <string name="maps">Map</string>
+    <string name="near_by">NearBy</string>
+    <string name="title_profile">Profile</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

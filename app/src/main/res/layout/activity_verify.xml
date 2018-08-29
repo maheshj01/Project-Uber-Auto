@@ -3,35 +3,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
-    android:background="#666"
+    android:background="@drawable/animation_list"
     android:layout_width="match_parent">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout"
+        android:layout_width="200dp"
+        android:layout_height="57dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="#fff"
-        android:hint="hint"
-        android:inputType="phone"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.744" />
+        app:layout_constraintVertical_bias="0.801">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/otp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="OTP"
+            android:inputType="number"
+            android:maxLength="6"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
+
+    </android.support.design.widget.TextInputLayout>
+
 
     <Button
         android:id="@+id/button"
-        android:layout_width="wrap_content"
+        android:layout_width="191dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="176dp"
+        android:layout_marginBottom="240dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:background="#fff"
-        android:text="SignIn"
+        android:background="@color/white"
+        android:text="Verfiy"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin:'com.android.application'
 
 android {
     compileSdkVersion 27
@@ -27,9 +27,11 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.hbb20:ccp:2.2.0'
     implementation 'com.google.firebase:firebase-auth:16.0.3'
     implementation 'com.google.firebase:firebase-firestore:17.0.3'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
+
 }
 apply plugin: 'com.google.gms.google-services'

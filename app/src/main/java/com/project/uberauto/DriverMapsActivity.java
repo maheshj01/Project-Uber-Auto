@@ -167,11 +167,10 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onConnected(@Nullable Bundle bundle){
         Toast.makeText(this, "Connection Established", Toast.LENGTH_SHORT).show();
-    mlocationequest = new LocationRequest();
-    mlocationequest.setInterval(1000);
-    mlocationequest.setFastestInterval(1000);
-    mlocationequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);   //high battery drainage
-
+        mlocationequest = new LocationRequest();
+        mlocationequest.setInterval(1000);
+        mlocationequest.setFastestInterval(1000);
+        mlocationequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);   //high battery drainage
     }
 
     @Override

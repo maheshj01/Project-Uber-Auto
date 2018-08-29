@@ -1,14 +1,24 @@
 package com.project.uberauto;
 
+import android.app.Notification;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,25 +34,37 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-    Button button;
+    Button signin,register;
     EditText text;
     String mcode;
     PhoneAuthProvider.ForceResendingToken mResendToken;
-    TextView skip;
+    TextView skip,forgot;
     private FirebaseAuth mAuth;
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+        forgot= findViewById(R.id.forgot);
         text = findViewById(R.id.edittext1);
-        button = findViewById(R.id.button1);
+        register = findViewById(R.id.register);
+        signin = findViewById(R.id.signin);
         mAuth = FirebaseAuth.getInstance();
-        skip = findViewById(R.id.textView);
-        button.setOnClickListener(new View.OnClickListener() {
+        skip = findViewById(R.id.skip);
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent registerview = new Intent(MainActivity.this,RegisterActivity.class);
+                startActivity(registerview);
+            }
+        });
+        signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(text.getText().toString().length() != 10){
-                    text.setHint("10 Digit Phone no");
+                    Toast.makeText(MainActivity.this, "Please enter 10 digit phone no", Toast.LENGTH_SHORT).show();
                 }
                 else
                 sendOtp();
@@ -51,8 +73,21 @@ public class MainActivity extends AppCompatActivity {
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setIndeterminate(true);
+                progressDialog.show();
                 Intent map = new Intent(MainActivity.this,DriverMapsActivity.class);
                 startActivity(map);
+            }
+        });
+        forgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setIndeterminate(true);
+                progressDialog.show();
+                Intent mverify = new Intent(MainActivity.this,VerifyActivity.class);
+                startActivity(mverify);
             }
         });
     }
@@ -60,11 +95,15 @@ public class MainActivity extends AppCompatActivity {
     public void sendOtp() {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 "+91" + text.getText().toString().trim(),        // Phone number to verify
-                45,                 // Timeout duration
+                60,                 // Timeout duration
                 TimeUnit.SECONDS,   // Unit of timeout
                 this,               // Activity (for callback binding)
                 mCallbacks);
-      //  dialog.dismiss();// OnVerificationStateChangedCallbacks
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Authenticating...");
+        progressDialog.show();
+//        https://material.io/tools/color/#!/?view.left=1&view.right=0&primary.color=D50000&secondary.color=AD1457
     }
 
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -106,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 // The SMS verification code has been sent to the provided phone number, we
                 // now need to ask the user to enter the code and then construct a credential
                 // by combining the code with a verification ID.
+
                 Log.d("", "onCodeSent:" + verificationId);
                 Intent verifyActivity = new Intent(MainActivity.this, DriverMapsActivity.class);
                 startActivity(verifyActivity);

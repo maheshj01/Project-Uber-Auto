@@ -3,8 +3,8 @@
     package="com.project.uberauto">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -46,7 +46,8 @@
 
         <activity
             android:name=".DriverMapsActivity"
-            android:label="@string/title_activity_driver_maps"></activity>
+            android:label="@string/title_activity_driver_maps" />
+        <activity android:name=".RegisterActivity"></activity>
     </application>
 
 </manifest>
