@@ -1,4 +1,4 @@
-apply plugin:'com.android.application'
+apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
@@ -19,7 +19,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
@@ -32,6 +32,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:17.0.3'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
-
 }
 apply plugin: 'com.google.gms.google-services'

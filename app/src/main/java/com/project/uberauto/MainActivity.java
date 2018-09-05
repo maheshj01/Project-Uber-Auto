@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     String mcode;
     PhoneAuthProvider.ForceResendingToken mResendToken;
     TextView skip,forgot;
+    ImageView facebook,google,twitter;
     private FirebaseAuth mAuth;
     ProgressDialog progressDialog;
 
@@ -51,8 +53,12 @@ public class MainActivity extends AppCompatActivity {
         text = findViewById(R.id.edittext1);
         register = findViewById(R.id.register);
         signin = findViewById(R.id.signin);
+        facebook = findViewById(R.id.facebook);
+        twitter = findViewById(R.id.twitter);
+        google = findViewById(R.id.gplus);
         mAuth = FirebaseAuth.getInstance();
         skip = findViewById(R.id.skip);
+        google.setOnClickListener(logintoGoogle);
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +96,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(mverify);
             }
         });
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
     }
+
+    View.OnClickListener logintoGoogle = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
 
     public void sendOtp() {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
