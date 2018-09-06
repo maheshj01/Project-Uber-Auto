@@ -1,6 +1,5 @@
 package com.project.uberauto;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -34,7 +33,6 @@ public class RegisterActivity extends AppCompatActivity {
     TextView textlogin;
     EditText name,email,phone,city,passwd;
     Button registerbtn;
-    ProgressDialog progressDialog;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
     AVLoadingIndicatorView avi;

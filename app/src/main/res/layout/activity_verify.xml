@@ -16,10 +16,10 @@
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.801">
+        app:layout_constraintVertical_bias="0.889">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/otp"
@@ -33,31 +33,54 @@
 
     </android.support.design.widget.TextInputLayout>
 
-
-    <EditText
-        android:id="@+id/phone"
-        android:layout_width="259dp"
-        android:layout_height="45dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="7"
-        android:hint="Phone"
-        android:inputType="number"
-        android:maxLength="10"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="80dp"
+        android:weightSum="10"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.595" />
+        app:layout_constraintVertical_bias="0.876"
+        tools:layout_editor_absoluteX="0dp">
+
+        <EditText
+            android:id="@+id/phone"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="7"
+            android:hint="Phone"
+            android:inputType="number"
+            android:maxLength="10"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.601" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="3"
+            android:textStyle="bold"
+            android:text="Send OTP"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/phone"
+            tools:layout_editor_absoluteY="200dp" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/button"
         android:layout_width="191dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="240dp"
+        android:layout_marginBottom="256dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:background="@color/white"
@@ -67,4 +90,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+
 </android.support.constraint.ConstraintLayout>

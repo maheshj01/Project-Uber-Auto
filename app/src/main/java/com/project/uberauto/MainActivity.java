@@ -1,7 +1,6 @@
 package com.project.uberauto;
 
 import android.app.Notification;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
@@ -78,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                avi.show();
                 Intent map = new Intent(MainActivity.this,DriverMapsActivity.class);
                 startActivity(map);
             }
@@ -86,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
         forgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                avi.show();
                 Intent mverify = new Intent(MainActivity.this,VerifyActivity.class);
                 startActivity(mverify);
             }

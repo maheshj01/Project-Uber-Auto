@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,6 +29,7 @@ public class VerifyActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     AVLoadingIndicatorView avi;
     String mcode;
+    TextView sendotp;
     EditText phone;
     Button verify;
     PhoneAuthProvider.ForceResendingToken mResendToken;
@@ -37,17 +39,25 @@ public class VerifyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_verify);
         mAuth = FirebaseAuth.getInstance();
         phone = findViewById(R.id.phone);
+        sendotp = findViewById(R.id.textView2);
         verify = findViewById(R.id.button);
-        verify.setOnClickListener(new View.OnClickListener() {
+        verify.setOnClickListener(verifyotp);
+        sendotp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if(!phone.getText().toString().isEmpty()) sendOtp();
+            if(phone.getText().toString().length()==10) sendOtp();
             else{
                 Toast.makeText(VerifyActivity.this, "enter 10 digit phone no", Toast.LENGTH_SHORT).show();
             }
             }
         });
     }
+    View.OnClickListener verifyotp = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(VerifyActivity.this, "Something Went Wrong :(", Toast.LENGTH_SHORT).show();
+        }
+    };
 
     public void sendOtp() {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
