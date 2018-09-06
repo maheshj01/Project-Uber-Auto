@@ -31,32 +31,31 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     Button signin,register;
-    EditText text;
-    String mcode;
-    PhoneAuthProvider.ForceResendingToken mResendToken;
+    EditText text,email,password;
     TextView skip,forgot;
     ImageView facebook,google,twitter;
     private FirebaseAuth mAuth;
-    ProgressDialog progressDialog;
-
+    AVLoadingIndicatorView avi;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        avi=findViewById(R.id.avi);
         setContentView(R.layout.activity_main);
         forgot= findViewById(R.id.forgot);
-        text = findViewById(R.id.edittext1);
         register = findViewById(R.id.register);
         signin = findViewById(R.id.signin);
         facebook = findViewById(R.id.facebook);
         twitter = findViewById(R.id.twitter);
         google = findViewById(R.id.gplus);
         mAuth = FirebaseAuth.getInstance();
+        email = findViewById(R.id.email);
+        password = findViewById(R.id.password);
         skip = findViewById(R.id.skip);
         google.setOnClickListener(logintoGoogle);
         register.setOnClickListener(new View.OnClickListener() {
@@ -72,16 +71,14 @@ public class MainActivity extends AppCompatActivity {
                 if(text.getText().toString().length() != 10){
                     Toast.makeText(MainActivity.this, "Please enter 10 digit phone no", Toast.LENGTH_SHORT).show();
                 }
-                else
-                sendOtp();
+                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty())
+                    Toast.makeText(MainActivity.this, "email or password empty", Toast.LENGTH_SHORT).show();
             }
         });
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = new ProgressDialog(MainActivity.this);
-                progressDialog.setIndeterminate(true);
-                progressDialog.show();
+                avi.show();
                 Intent map = new Intent(MainActivity.this,DriverMapsActivity.class);
                 startActivity(map);
             }
@@ -89,9 +86,7 @@ public class MainActivity extends AppCompatActivity {
         forgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = new ProgressDialog(MainActivity.this);
-                progressDialog.setIndeterminate(true);
-                progressDialog.show();
+                avi.show();
                 Intent mverify = new Intent(MainActivity.this,VerifyActivity.class);
                 startActivity(mverify);
             }
@@ -109,92 +104,5 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void sendOtp() {
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                "+91" + text.getText().toString().trim(),        // Phone number to verify
-                60,                 // Timeout duration
-                TimeUnit.SECONDS,   // Unit of timeout
-                this,               // Activity (for callback binding)
-                mCallbacks);
-        progressDialog = new ProgressDialog(MainActivity.this);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
-//        https://material.io/tools/color/#!/?view.left=1&view.right=0&primary.color=D50000&secondary.color=AD1457
-    }
 
-    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
-            @Override
-            public void onVerificationCompleted(PhoneAuthCredential credential) {
-                // This callback will be invoked in two situations:
-                // 1 - Instant verification. In some cases the phone number can be instantly
-                //     verified without needing to send or enter a verification code.
-                // 2 - Auto-retrieval. On some devices Google Play services can automatically
-                //     detect the incoming verification SMS and perform verification without
-                //     user action.
-                Log.d("", "onVerificationCompleted:" + credential);
-
-                signInWithPhoneAuthCredential(credential);
-            }
-
-            @Override
-            public void onVerificationFailed(FirebaseException e) {
-                // This callback is invoked in an invalid request for verification is made,
-                // for instance if the the phone number format is not valid.
-                Log.w("", "onVerificationFailed", e);
-
-                if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    // Invalid request
-                    // ...
-                } else if (e instanceof FirebaseTooManyRequestsException) {
-                    // The SMS quota for the project has been exceeded
-                    // ...
-                }
-
-                // Show a message and update the UI
-                // ...
-            }
-
-            @Override
-            public void onCodeSent(String verificationId,
-                    PhoneAuthProvider.ForceResendingToken token) {
-                // The SMS verification code has been sent to the provided phone number, we
-                // now need to ask the user to enter the code and then construct a credential
-                // by combining the code with a verification ID.
-
-                Log.d("", "onCodeSent:" + verificationId);
-                Intent verifyActivity = new Intent(MainActivity.this, DriverMapsActivity.class);
-                startActivity(verifyActivity);
-                // Save verification ID and resending token so we can use them later
-                    mcode = verificationId;
-                    mResendToken = token;
-                    Log.d("#otp = ",mcode);
-
-                // ...
-            }
-        };
-//   PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mcode, mcode);
-
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("", "signInWithCredential:success");
-
-                            FirebaseUser user = task.getResult().getUser();
-                            // ...
-                        } else {
-                            // Sign in failed, display a message and update the UI
-                            Log.w("", "signInWithCredential:failure", task.getException());
-                            if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                // The verification code entered was invalid
-                            }
-                        }
-                    }
-                });
-    }
 }

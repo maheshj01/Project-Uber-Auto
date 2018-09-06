@@ -6,6 +6,24 @@
     android:background="@drawable/animation_list"
     tools:context=".MainActivity">
 
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avi"
+        style="@style/AVLoadingIndicatorView.Small"
+        android:layout_width="59dp"
+        android:layout_height="47dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:indicatorColor="@color/white"
+        app:indicatorName="BallPulseIndicator"
+        app:layout_constraintBottom_toTopOf="@+id/signin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayout2"
         android:layout_width="344dp"
@@ -22,9 +40,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
 
-
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/edittext1"
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="Email or Phone"
@@ -34,12 +51,13 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayout"
         android:layout_width="344dp"
-        android:layout_height="0dp"
+        android:layout_height="57dp"
         android:layout_marginBottom="24dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -170,7 +188,7 @@
             android:layout_width="0dp"
             android:layout_height="71dp"
             android:layout_weight="3"
-            app:srcCompat="@drawable/icons8_twitter_50"
+            app:srcCompat="@drawable/icons8_twitter_480"
             tools:layout_editor_absoluteX="107dp"
             tools:layout_editor_absoluteY="493dp" />
 
@@ -179,7 +197,7 @@
             android:layout_width="0dp"
             android:layout_height="73dp"
             android:layout_weight="3"
-            app:srcCompat="@drawable/icons8_facebook_50"
+            app:srcCompat="@drawable/icons8_facebook_480"
             tools:layout_editor_absoluteX="187dp"
             tools:layout_editor_absoluteY="493dp" />
 
