@@ -2,6 +2,7 @@ package com.project.uberauto;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -25,7 +28,7 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.concurrent.TimeUnit;
 
-public class VerifyActivity extends AppCompatActivity {
+public class VerifyActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private FirebaseAuth mAuth;
     AVLoadingIndicatorView avi;
     String mcode;
@@ -80,7 +83,6 @@ public class VerifyActivity extends AppCompatActivity {
             //     detect the incoming verification SMS and perform verification without
             //     user action.
             Log.d("", "onVerificationCompleted:" + credential);
-
             signInWithPhoneAuthCredential(credential);
         }
 
@@ -142,5 +144,20 @@ public class VerifyActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }
