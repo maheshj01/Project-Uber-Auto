@@ -104,6 +104,7 @@
         android:layout_marginTop="432dp"
         android:layout_weight="1"
         android:text="Forgot Password?"
+        android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

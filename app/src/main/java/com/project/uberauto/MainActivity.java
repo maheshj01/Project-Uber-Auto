@@ -97,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener logintoGoogle = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            Intent view = new Intent(MainActivity.this,PostLogin.class);
+            startActivity(view);
         }
     };
 
