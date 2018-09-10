@@ -112,8 +112,7 @@ public class VerifyActivity extends AppCompatActivity implements GoogleApiClient
             // by combining the code with a verification ID.
 
             Log.d("", "onCodeSent:" + verificationId);
-            Intent verifyActivity = new Intent(VerifyActivity.this, DriverMapsActivity.class);
-            startActivity(verifyActivity);
+
             // Save verification ID and resending token so we can use them later
             mcode = verificationId;
             mResendToken = token;

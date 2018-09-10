@@ -7,6 +7,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
@@ -55,12 +56,13 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
-        skip = findViewById(R.id.skip);
         google.setOnClickListener(logintoGoogle);
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent registerview = new Intent(MainActivity.this,RegisterActivity.class);
+                registerview.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                registerview.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(registerview);
             }
         });
@@ -72,13 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty())
                     Toast.makeText(MainActivity.this, "email or password empty", Toast.LENGTH_SHORT).show();
-            }
-        });
-        skip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent map = new Intent(MainActivity.this,DriverMapsActivity.class);
-                startActivity(map);
             }
         });
         forgot.setOnClickListener(new View.OnClickListener() {
@@ -102,5 +97,23 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private Boolean exit = false;
+    @Override
+    public void onBackPressed() {
+        if (exit) {
+            finish(); // finish activity
+        } else {
+            Toast.makeText(this, "Press Back again to Exit.",
+                    Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000);
 
+        }
+
+    }
 }
