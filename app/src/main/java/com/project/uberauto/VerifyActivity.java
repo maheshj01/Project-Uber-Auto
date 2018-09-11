@@ -1,6 +1,5 @@
 package com.project.uberauto;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +15,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskExecutors;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
@@ -28,12 +28,12 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.concurrent.TimeUnit;
 
-public class VerifyActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class VerifyActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     AVLoadingIndicatorView avi;
     String mcode;
     TextView sendotp;
-    EditText phone;
+    EditText phone,otp;
     Button verify;
     PhoneAuthProvider.ForceResendingToken mResendToken;
     @Override
@@ -43,47 +43,58 @@ public class VerifyActivity extends AppCompatActivity implements GoogleApiClient
         mAuth = FirebaseAuth.getInstance();
         phone = findViewById(R.id.phone);
         sendotp = findViewById(R.id.textView2);
-        verify = findViewById(R.id.button);
+        otp = findViewById(R.id.otp);
+        verify = findViewById(R.id.vbutton);  //btn
         verify.setOnClickListener(verifyotp);
         sendotp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if(phone.getText().toString().length()==10) sendOtp();
+            if(phone.getText().toString().length()==10)
+                sendOtp(phone.getText().toString());
             else{
                 Toast.makeText(VerifyActivity.this, "enter 10 digit phone no", Toast.LENGTH_SHORT).show();
             }
             }
         });
     }
+    // verify otp
     View.OnClickListener verifyotp = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(VerifyActivity.this, "Something Went Wrong :(", Toast.LENGTH_SHORT).show();
+            String code = otp.getText().toString().trim();
+            if (code.isEmpty() || code.length() < 6) {
+               otp.setError("Enter valid code");
+                otp.requestFocus();
+                return;
+            }
+            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mcode, code);
+
+            //signing the user
+            signInWithPhoneAuthCredential(credential);
         }
     };
 
-    public void sendOtp() {
+    public void sendOtp(String phoneno) {
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                "+91" + phone.getText().toString().trim(),        // Phone number to verify
+                "+91" + phoneno.trim(),        // Phone number to verify
                 60,                 // Timeout duration
                 TimeUnit.SECONDS,   // Unit of timeout
-                this,               // Activity (for callback binding)
+                TaskExecutors.MAIN_THREAD,               // Activity (for callback binding)
                 mCallbacks);
-        avi.show();
-//        https://material.io/tools/color/#!/?view.left=1&view.right=0&primary.color=D50000&secondary.color=AD1457
-    }
-    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+   }
+
+   private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
         @Override
         public void onVerificationCompleted(PhoneAuthCredential credential) {
-            // This callback will be invoked in two situations:
-            // 1 - Instant verification. In some cases the phone number can be instantly
-            //     verified without needing to send or enter a verification code.
-            // 2 - Auto-retrieval. On some devices Google Play services can automatically
-            //     detect the incoming verification SMS and perform verification without
-            //     user action.
+            String code = credential.getSmsCode();
             Log.d("", "onVerificationCompleted:" + credential);
-            signInWithPhoneAuthCredential(credential);
+            if(code!=null) {
+                Toast.makeText(VerifyActivity.this, "trying to signiin autoomatically !", Toast.LENGTH_SHORT).show();
+                signInWithPhoneAuthCredential(credential);
+                otp.setText(code);
+                verifyVerificationCode(code);
+            }
         }
 
         @Override
@@ -104,6 +115,14 @@ public class VerifyActivity extends AppCompatActivity implements GoogleApiClient
             // ...
         }
 
+       private void verifyVerificationCode(String code) {
+           //creating the credential
+           PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mcode, code);
+
+           //signing the user
+           signInWithPhoneAuthCredential(credential);
+       }
+
         @Override
         public void onCodeSent(String verificationId,
                                PhoneAuthProvider.ForceResendingToken token) {
@@ -112,7 +131,7 @@ public class VerifyActivity extends AppCompatActivity implements GoogleApiClient
             // by combining the code with a verification ID.
 
             Log.d("", "onCodeSent:" + verificationId);
-
+            Toast.makeText(VerifyActivity.this, "code sent please wait", Toast.LENGTH_SHORT).show();
             // Save verification ID and resending token so we can use them later
             mcode = verificationId;
             mResendToken = token;
@@ -121,7 +140,6 @@ public class VerifyActivity extends AppCompatActivity implements GoogleApiClient
             // ...
         }
     };
-//   PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mcode, mcode);
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         mAuth.signInWithCredential(credential)
@@ -143,20 +161,6 @@ public class VerifyActivity extends AppCompatActivity implements GoogleApiClient
                         }
                     }
                 });
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 }

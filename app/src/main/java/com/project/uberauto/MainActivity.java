@@ -35,7 +35,7 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     Button signin,register;
     EditText text,email,password;
     TextView skip,forgot;
@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         google.setOnClickListener(logintoGoogle);
+
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,13 +70,37 @@ public class MainActivity extends AppCompatActivity {
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(text.getText().toString().length() != 10){
-                    Toast.makeText(MainActivity.this, "Please enter 10 digit phone no", Toast.LENGTH_SHORT).show();
-                }
-                if(email.getText().toString().isEmpty() || password.getText().toString().isEmpty())
+                if (email.getText().toString().isEmpty() || password.getText().toString().isEmpty()) {
                     Toast.makeText(MainActivity.this, "email or password empty", Toast.LENGTH_SHORT).show();
-            }
-        });
+                    return;
+                }
+//                avi.setVisibility(v.VISIBLE);
+            mAuth.signInWithEmailAndPassword(email.getText().toString().trim(), password.getText().toString().trim()).addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d("", "signInWithEmail:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        Toast.makeText(MainActivity.this, "Authentication Success ! Welcome.",
+                                Toast.LENGTH_SHORT).show();
+                        Intent login = new Intent(MainActivity.this,PostLogin.class);
+                        startActivity(login);
+                  //      updateUI(user);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.d("", "signInWithEmail:failure", task.getException());
+                        Toast.makeText(MainActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+               //         updateUI(null);
+                    }
+
+                    // ...
+                }
+            });
+
+            }});
+
         forgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,10 +108,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(mverify);
             }
         });
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+     //   updateUI(currentUser);
     }
 
     View.OnClickListener logintoGoogle = new View.OnClickListener() {

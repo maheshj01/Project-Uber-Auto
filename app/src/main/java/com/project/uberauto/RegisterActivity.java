@@ -64,33 +64,54 @@ public class RegisterActivity extends AppCompatActivity {
     View.OnClickListener registerUser = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (name.getText().toString().isEmpty() || email.getText().toString().isEmpty() || phone.getText().toString().isEmpty()
-                    || passwd.getText().toString().isEmpty()) {
-                Toast.makeText(RegisterActivity.this, "Please fill all the details", Toast.LENGTH_SHORT).show();
-            } else {
-               /* mAuth.createUserWithEmailAndPassword(email.getText().toString(), passwd.getText().toString())
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d("", "createUserWithEmail:success");
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    updateUI(user);
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w("", "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
-                                    updateUI(null);
-                                }
-
-                                // ...
-                            }
-                        });*/
-               updateUI(email.getText().toString(),passwd.getText().toString());
+            if(name.getText().toString().isEmpty()){
+                Toast.makeText(RegisterActivity.this, "Name is empty", Toast.LENGTH_SHORT).show();
+                return;
             }
-        }};
+            if(email.getText().toString().isEmpty()){
+                Toast.makeText(RegisterActivity.this, "Email is empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if(passwd.getText().toString().isEmpty())    {
+                Toast.makeText(RegisterActivity.this, "password is empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if(phone.getText().toString().isEmpty()){
+                Toast.makeText(RegisterActivity.this, "phone is empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if(city.getText().toString().isEmpty()){
+                Toast.makeText(RegisterActivity.this, "City is empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+            avi.show();
+            mAuth.createUserWithEmailAndPassword(email.getText().toString().trim(), passwd.getText().toString().trim())
+                    .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Toast.makeText(RegisterActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
+                            avi.setVisibility(View.GONE);
+                            // If sign in fails, display a message to the user. If sign in succeeds
+                            // the auth state listener will be notified and logic to handle the
+                            // signed in user can be handled in the listener.
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(RegisterActivity.this, "Authentication failed." + task.getException(),
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                finish();
+                            }
+                        }
+                    });
+
+           }};
+    @Override
+    protected void onResume() {
+        super.onResume();
+       avi.setVisibility(View.GONE);
+    }
 
     public void updateUI(String semail,String spassword){
         avi.show();
