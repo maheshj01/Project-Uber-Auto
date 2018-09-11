@@ -57,7 +57,14 @@ public class MainActivity extends AppCompatActivity{
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         google.setOnClickListener(logintoGoogle);
-
+        skip = findViewById(R.id.skip);
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent view = new Intent(MainActivity.this,PostLogin.class);
+                startActivity(view);
+            }
+        });
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,8 +128,7 @@ public class MainActivity extends AppCompatActivity{
     View.OnClickListener logintoGoogle = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent view = new Intent(MainActivity.this,PostLogin.class);
-            startActivity(view);
+
         }
     };
 
