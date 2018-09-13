@@ -26,8 +26,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.hbb20.CountryCodePicker;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
 
 public class RegisterActivity extends AppCompatActivity {
     CountryCodePicker ccp;
@@ -98,8 +104,9 @@ public class RegisterActivity extends AppCompatActivity {
                             // signed in user can be handled in the listener.
                             if (!task.isSuccessful()) {
                                 Toast.makeText(RegisterActivity.this, "Authentication failed." + task.getException(),
-                                        Toast.LENGTH_SHORT).show();
+                                        Toast.LENGTH_LONG).show();
                             } else {
+                                pushdb(email.getText().toString().trim(),passwd.getText().toString().trim());
                                 startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                                 finish();
                             }
@@ -113,16 +120,20 @@ public class RegisterActivity extends AppCompatActivity {
        avi.setVisibility(View.GONE);
     }
 
-    public void updateUI(String semail,String spassword){
+    public void pushdb(String semail,String spassword){
         avi.show();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date();
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("name",name.getText().toString() );
         data.put("email", semail);
         data.put("phone no", phone.getText().toString());
         data.put("Password",spassword);
         data.put("city", city.getText().toString());
+        data.put("Date & time", sdf.format(date));
+
         avi.show();
-        db.collection("New User").add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        db.collection("Users").add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 avi.hide();

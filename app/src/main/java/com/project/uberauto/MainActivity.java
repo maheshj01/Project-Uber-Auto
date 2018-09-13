@@ -45,6 +45,11 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser()!=null){
+            Intent view = new Intent(MainActivity.this,PostLogin.class);
+            startActivity(view);
+        }
         avi=findViewById(R.id.avi);
         setContentView(R.layout.activity_main);
         forgot= findViewById(R.id.forgot);
@@ -53,7 +58,6 @@ public class MainActivity extends AppCompatActivity{
         facebook = findViewById(R.id.facebook);
         twitter = findViewById(R.id.twitter);
         google = findViewById(R.id.gplus);
-        mAuth = FirebaseAuth.getInstance();
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         google.setOnClickListener(logintoGoogle);
@@ -81,7 +85,8 @@ public class MainActivity extends AppCompatActivity{
                     Toast.makeText(MainActivity.this, "email or password empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-//                avi.setVisibility(v.VISIBLE);
+
+            avi.setVisibility(v.VISIBLE);
             mAuth.signInWithEmailAndPassword(email.getText().toString().trim(), password.getText().toString().trim()).addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
