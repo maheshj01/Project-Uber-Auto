@@ -43,6 +43,10 @@ public class VerifyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify);
         mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser()!=null){
+            Intent view = new Intent(VerifyActivity.this,PostLogin.class);
+            startActivity(view);
+        }
         phone = findViewById(R.id.phone);
         sendotp = findViewById(R.id.textView2);
         avi=findViewById(R.id.aviverify);

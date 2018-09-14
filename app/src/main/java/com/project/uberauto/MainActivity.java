@@ -45,11 +45,7 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
-        if(mAuth.getCurrentUser()!=null){
-            Intent view = new Intent(MainActivity.this,PostLogin.class);
-            startActivity(view);
-        }
+
         avi=findViewById(R.id.avi);
         setContentView(R.layout.activity_main);
         forgot= findViewById(R.id.forgot);
