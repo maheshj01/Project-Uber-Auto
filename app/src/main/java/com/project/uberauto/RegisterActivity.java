@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -40,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
     CountryCodePicker ccp;
     TextView textlogin;
     EditText name,email,phone,city,passwd;
+    RadioGroup rgroup;
     Button registerbtn;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
@@ -49,9 +53,11 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         textlogin = findViewById(R.id.textlogin);
+        rgroup = findViewById(R.id.rgroup);
         name = findViewById(R.id.name);
         email = findViewById(R.id.semail);
         phone = findViewById(R.id.editphone);
+        phone.setText(getIntent().getStringExtra("phone"));
         passwd = findViewById(R.id.password);
         city = findViewById(R.id.city);
         registerbtn = findViewById(R.id.signupbtn);
@@ -63,6 +69,12 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent view = new Intent(RegisterActivity.this,MainActivity.class);
                 startActivity(view);
+            }
+        });
+        rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton user = findViewById(R.id.ruser);
             }
         });
         CollectionReference usersCollectionRef = db.collection("Users");
@@ -184,6 +196,13 @@ public class RegisterActivity extends AppCompatActivity {
                                         break;
                                 }
                             }else { // register success
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(name.getText().toString().trim())
+                                        .build();
+                                user.updateProfile(profileUpdates);
+
+
                                 pushdb(email.getText().toString().trim(),passwd.getText().toString().trim());
                                 startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                                 finish();
@@ -210,7 +229,6 @@ public class RegisterActivity extends AppCompatActivity {
         data.put("city", city.getText().toString());
         data.put("Date & time", sdf.format(date));
 
-        avi.show();
         db.collection("Users").add(data).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {

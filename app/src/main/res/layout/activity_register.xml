@@ -24,7 +24,51 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.875" />
+        app:layout_constraintVertical_bias="0.0" />
+
+    <LinearLayout
+        android:layout_width="380dp"
+        android:layout_height="39dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline2">
+
+        <TextView
+            android:id="@+id/textuser"
+            android:layout_width="93dp"
+            android:layout_height="match_parent"
+            android:text="I am a"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+        <RadioGroup
+            android:id="@+id/rgroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/ruser"
+                android:layout_width="117dp"
+                android:layout_height="match_parent"
+                android:checked="true"
+                android:text="User"
+                android:textSize="16dp" />
+
+            <RadioButton
+                android:id="@+id/rdriver"
+                android:layout_width="167dp"
+                android:layout_height="match_parent"
+                android:text="Driver"
+                android:textSize="16dp" />
+
+        </RadioGroup>
+
+    </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayout2"
@@ -32,7 +76,7 @@
         android:layout_height="64dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="164dp"
         android:layout_weight="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -95,6 +139,7 @@
             android:layout_marginTop="8dp"
             android:layout_weight="4"
             android:ems="10"
+            app:ccp_contentColor="@color/white"
             app:ccpDialog_backgroundColor="@color/white"
             app:ccp_defaultNameCode="In"
             app:ccp_showFullName="true"
@@ -120,7 +165,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="115dp" />
+        app:layout_constraintGuide_begin="121dp" />
 
     <Button
         android:id="@+id/signupbtn"
@@ -129,13 +174,12 @@
         android:layout_gravity="center"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="12dp"
         android:background="#fff"
         android:text="Sign Up"
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout5" />
 
@@ -213,6 +257,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.456" />
+        app:layout_constraintVertical_bias="0.489" />
+
 
 </android.support.constraint.ConstraintLayout>

@@ -76,6 +76,24 @@
             tools:layout_editor_absoluteY="200dp" />
     </LinearLayout>
 
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/aviverify"
+        style="@style/AVLoadingIndicatorView.Small"
+        android:layout_width="45dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:visibility="invisible"
+        app:indicatorColor="@color/white"
+        app:indicatorName="BallPulseIndicator"
+        app:layout_constraintBottom_toTopOf="@+id/vbutton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
     <Button
         android:id="@+id/vbutton"
         android:layout_width="191dp"

@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity{
     Button signin,register;
     EditText text,email,password;
-    TextView skip,forgot;
+    TextView forgot;
     ImageView facebook,google,twitter;
     private FirebaseAuth mAuth;
     AVLoadingIndicatorView avi;
@@ -61,14 +61,6 @@ public class MainActivity extends AppCompatActivity{
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         google.setOnClickListener(logintoGoogle);
-        skip = findViewById(R.id.skip);
-        skip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent view = new Intent(MainActivity.this,PostLogin.class);
-                startActivity(view);
-            }
-        });
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

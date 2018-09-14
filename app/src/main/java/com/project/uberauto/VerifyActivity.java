@@ -1,5 +1,7 @@
 package com.project.uberauto;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -43,14 +45,16 @@ public class VerifyActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         phone = findViewById(R.id.phone);
         sendotp = findViewById(R.id.textView2);
+        avi=findViewById(R.id.aviverify);
         otp = findViewById(R.id.otp);
         verify = findViewById(R.id.vbutton);  //btn
         verify.setOnClickListener(verifyotp);
         sendotp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if(phone.getText().toString().length()==10)
+            if(phone.getText().toString().length()==10) {
                 sendOtp(phone.getText().toString());
+            }
             else{
                 Toast.makeText(VerifyActivity.this, "enter 10 digit phone no", Toast.LENGTH_SHORT).show();
             }
@@ -81,21 +85,28 @@ public class VerifyActivity extends AppCompatActivity {
                 TimeUnit.SECONDS,   // Unit of timeout
                 TaskExecutors.MAIN_THREAD,               // Activity (for callback binding)
                 mCallbacks);
-   }
+           }
 
    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
-        @Override
+        @Override  //on auto detect sms:success
         public void onVerificationCompleted(PhoneAuthCredential credential) {
             String code = credential.getSmsCode();
             Log.d("", "onVerificationCompleted:" + credential);
             if(code!=null) {
-                Toast.makeText(VerifyActivity.this, "trying to signiin autoomatically !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(VerifyActivity.this, "Sms Detected", Toast.LENGTH_SHORT).show();
                 signInWithPhoneAuthCredential(credential);
                 otp.setText(code);
                 verifyVerificationCode(code);
             }
         }
+       private void verifyVerificationCode(String code) {
+           //creating the credential
+           PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mcode, code);
+
+           //signing the user
+           signInWithPhoneAuthCredential(credential);
+       }
 
         @Override
         public void onVerificationFailed(FirebaseException e) {
@@ -105,23 +116,16 @@ public class VerifyActivity extends AppCompatActivity {
 
             if (e instanceof FirebaseAuthInvalidCredentialsException) {
                 // Invalid request
-                // ...
+                Toast.makeText(VerifyActivity.this, "Invalid request", Toast.LENGTH_SHORT).show();
+
             } else if (e instanceof FirebaseTooManyRequestsException) {
                 // The SMS quota for the project has been exceeded
-                // ...
+                Toast.makeText(VerifyActivity.this, "Sms Limit exceeded please try again later ", Toast.LENGTH_SHORT).show();
             }
 
             // Show a message and update the UI
             // ...
         }
-
-       private void verifyVerificationCode(String code) {
-           //creating the credential
-           PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mcode, code);
-
-           //signing the user
-           signInWithPhoneAuthCredential(credential);
-       }
 
         @Override
         public void onCodeSent(String verificationId,
@@ -142,14 +146,19 @@ public class VerifyActivity extends AppCompatActivity {
     };
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        avi.show();
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            avi.setVisibility(View.GONE);
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("", "signInWithCredential:success");
-
+                            Toast.makeText(VerifyActivity.this, "Verification Success", Toast.LENGTH_SHORT).show();
+                            Intent view = new Intent(VerifyActivity.this,RegisterActivity.class);
+                            view.putExtra("phone",phone.getText().toString());
+                            startActivity(view);
                             FirebaseUser user = task.getResult().getUser();
                             // ...
                         } else {
@@ -157,6 +166,7 @@ public class VerifyActivity extends AppCompatActivity {
                             Log.w("", "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
+                                Toast.makeText(VerifyActivity.this, "Invalid code :(", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
