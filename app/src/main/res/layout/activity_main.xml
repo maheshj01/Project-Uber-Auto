@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <com.wang.avi.AVLoadingIndicatorView
-        android:id="@+id/avi"
+        android:id="@+id/avimain"
         style="@style/AVLoadingIndicatorView.Small"
         android:layout_width="59dp"
         android:layout_height="47dp"
@@ -192,6 +192,8 @@
             tools:layout_editor_absoluteX="279dp"
             tools:layout_editor_absoluteY="493dp" />
     </LinearLayout>
+
+
 
 
 </android.support.constraint.ConstraintLayout>

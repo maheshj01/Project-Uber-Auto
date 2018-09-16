@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity{
                         // Sign in success, update UI with the signed-in user's information
                         avi.setVisibility(View.GONE);
                         Log.d("", "signInWithEmail:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
                         Toast.makeText(MainActivity.this, "Authentication Success ! Welcome.",
                                 Toast.LENGTH_SHORT).show();
                         Intent login = new Intent(MainActivity.this,PostLogin.class);
@@ -94,6 +93,7 @@ public class MainActivity extends AppCompatActivity{
                         Log.d("", "signInWithEmail:failure", task.getException());
                         Toast.makeText(MainActivity.this, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show();
+                        password.requestFocus();
                //         updateUI(null);
                     }
 
@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity{
             }
         });
     }
+
     @Override
     public void onStart() {
         mAuth = FirebaseAuth.getInstance();

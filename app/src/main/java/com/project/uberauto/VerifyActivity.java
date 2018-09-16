@@ -34,7 +34,7 @@ public class VerifyActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     AVLoadingIndicatorView avi;
     String mcode;
-    TextView sendotp;
+    TextView sendotp,skip;
     EditText phone,otp;
     Button verify;
     PhoneAuthProvider.ForceResendingToken mResendToken;
@@ -43,16 +43,19 @@ public class VerifyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify);
         mAuth = FirebaseAuth.getInstance();
-        if(mAuth.getCurrentUser()!=null){
-            Intent view = new Intent(VerifyActivity.this,PostLogin.class);
-            startActivity(view);
-        }
         phone = findViewById(R.id.phone);
+        skip=findViewById(R.id.skip);
         sendotp = findViewById(R.id.textView2);
         avi=findViewById(R.id.aviverify);
         otp = findViewById(R.id.otp);
         verify = findViewById(R.id.vbutton);  //btn
         verify.setOnClickListener(verifyotp);
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(VerifyActivity.this,MainActivity.class));
+            }
+        });
         sendotp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,16 +104,8 @@ public class VerifyActivity extends AppCompatActivity {
                 Toast.makeText(VerifyActivity.this, "Sms Detected", Toast.LENGTH_SHORT).show();
                 signInWithPhoneAuthCredential(credential);
                 otp.setText(code);
-                verifyVerificationCode(code);
             }
         }
-       private void verifyVerificationCode(String code) {
-           //creating the credential
-           PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mcode, code);
-
-           //signing the user
-           signInWithPhoneAuthCredential(credential);
-       }
 
         @Override
         public void onVerificationFailed(FirebaseException e) {
@@ -163,8 +158,6 @@ public class VerifyActivity extends AppCompatActivity {
                             Intent view = new Intent(VerifyActivity.this,RegisterActivity.class);
                             view.putExtra("phone",phone.getText().toString());
                             startActivity(view);
-                            FirebaseUser user = task.getResult().getUser();
-                            // ...
                         } else {
                             // Sign in failed, display a message and update the UI
                             Log.w("", "signInWithCredential:failure", task.getException());

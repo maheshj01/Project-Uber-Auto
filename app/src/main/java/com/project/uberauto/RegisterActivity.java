@@ -52,6 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        mAuth = FirebaseAuth.getInstance();
         textlogin = findViewById(R.id.textlogin);
         rgroup = findViewById(R.id.rgroup);
         name = findViewById(R.id.name);
@@ -63,12 +64,12 @@ public class RegisterActivity extends AppCompatActivity {
         registerbtn = findViewById(R.id.signupbtn);
         registerbtn.setOnClickListener(registerUser);
         avi = findViewById(R.id.avimain);
-        mAuth = FirebaseAuth.getInstance();
         textlogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent view = new Intent(RegisterActivity.this,MainActivity.class);
                 startActivity(view);
+                overridePendingTransition(R.anim.enter,R.anim.exit);
             }
         });
         rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -103,7 +104,6 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(RegisterActivity.this, "City is empty", Toast.LENGTH_SHORT).show();
                 return;
             }
-
 
             avi.show();
             mAuth.createUserWithEmailAndPassword(email.getText().toString().trim(), passwd.getText().toString().trim())
@@ -196,25 +196,23 @@ public class RegisterActivity extends AppCompatActivity {
                                         break;
                                 }
                             }else { // register success
-                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(name.getText().toString().trim())
-                                        .build();
-                                user.updateProfile(profileUpdates);
-
-
                                 pushdb(email.getText().toString().trim(),passwd.getText().toString().trim());
                                 startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                                finish();
+                                Log.d("this line will"," not execute");
                             }
                         }
                     });
 
            }};
+
     @Override
     protected void onResume() {
         super.onResume();
-       avi.setVisibility(View.GONE);
+       avi.setVisibility(View.GONE); //as soon as the activity loads avi is hidden
+        /*if(mAuth.getCurrentUser()!=null){
+            Intent view = new Intent(RegisterActivity.this,PostLogin.class);
+            startActivity(view);
+        }*/
     }
 
     public void pushdb(String semail,String spassword){
@@ -234,13 +232,11 @@ public class RegisterActivity extends AppCompatActivity {
             public void onSuccess(DocumentReference documentReference) {
                 avi.hide();
                 Toast.makeText(RegisterActivity.this, "Success User Registered", Toast.LENGTH_SHORT).show();
-                Intent login = new Intent(RegisterActivity.this,MainActivity.class);
-                startActivity(login);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(RegisterActivity.this, "failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "failed to insert into db:" + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 

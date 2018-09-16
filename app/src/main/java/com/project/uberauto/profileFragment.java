@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class profileFragment extends Fragment {
@@ -35,24 +36,25 @@ public class profileFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final FirebaseAuth.AuthStateListener mAuthlistener = new FirebaseAuth.AuthStateListener() {
+
+                mAuth = FirebaseAuth.getInstance();
+                FirebaseAuth.AuthStateListener listener = new FirebaseAuth.AuthStateListener() {
                     @Override
                     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                        if(mAuth.getCurrentUser()==null ) {
-                            Toast.makeText(getContext(), "Logout Successful !", Toast.LENGTH_SHORT).show();
-                            Intent view = new Intent(getActivity(), MainActivity.class);
-                            startActivity(view);
-                        }
-                        else{
-                            Toast.makeText(getActivity(), "Logout failed !", Toast.LENGTH_SHORT).show();
-                        }
+                      if(mAuth.getCurrentUser()==null){ // user not signed in
+                          Toast.makeText(getContext(), "auth state changed logged out", Toast.LENGTH_SHORT).show();
+                           startActivity(new Intent(getContext(),MainActivity.class));
+                      }
+                      else{  // already signed in
+                          Toast.makeText(getContext(), "user already signed in", Toast.LENGTH_SHORT).show();
+                      }
                     }
                 };
-                mAuth = FirebaseAuth.getInstance();
-                mAuth.addAuthStateListener(mAuthlistener);
+                mAuth.addAuthStateListener(listener);
                 mAuth.signOut();
             }
         });
+
         return view;
     }
 }

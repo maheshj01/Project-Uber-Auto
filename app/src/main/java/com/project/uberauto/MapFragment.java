@@ -47,7 +47,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     LocationRequest mlocationequest;
     private Boolean mLocationPermissionsGranted = true;
     private LocationManager locationManager;
-    private static final float DEFAULT_ZOOM = 15f;
+    private static final float DEFAULT_ZOOM = 16f;
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private Marker mPreviousMarker;
