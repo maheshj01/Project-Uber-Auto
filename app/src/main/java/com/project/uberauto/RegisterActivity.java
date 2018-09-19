@@ -209,10 +209,6 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
        avi.setVisibility(View.GONE); //as soon as the activity loads avi is hidden
-        /*if(mAuth.getCurrentUser()!=null){
-            Intent view = new Intent(RegisterActivity.this,PostLogin.class);
-            startActivity(view);
-        }*/
     }
 
     public void pushdb(String semail,String spassword){
