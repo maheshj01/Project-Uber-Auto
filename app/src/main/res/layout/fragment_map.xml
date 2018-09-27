@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MapFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -12,5 +13,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".DriverMapsActivity" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/searchbar"
+            android:layout_width="338dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="10dp"
+            android:background="@color/white"
+            android:hint="Search for places,cities,zip codes etc"
+            android:singleLine="true"
+            android:textColor="#000"
+            android:textSize="15dp" />
+
+    </RelativeLayout>
 
 </FrameLayout>
