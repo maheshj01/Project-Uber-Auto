@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,9 +64,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private Marker mPreviousMarker;
-    private EditText msearchtext;
+    private AutoCompleteTextView msearchtext;
     private static final String TAG = "Map";
     private static final int ERROR_DIALOG_REQUEST=9001;
+    private PlaceAutoCompleteAdaptar placeAutoCompleteAdaptar;
    //private LocationClient
     // private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     @Override
@@ -91,6 +93,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     }
 
     private void init(){
+//        placeAutoCompleteAdaptar = new PlaceAutoCompleteAdaptar(getContext(),)
         msearchtext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {

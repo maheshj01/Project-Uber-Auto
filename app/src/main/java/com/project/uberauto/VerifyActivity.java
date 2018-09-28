@@ -53,7 +53,7 @@ public class VerifyActivity extends AppCompatActivity {
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(VerifyActivity.this,MainActivity.class));
+                startActivity(new Intent(VerifyActivity.this,PostLogin.class));
             }
         });
         sendotp.setOnClickListener(new View.OnClickListener() {
@@ -155,11 +155,13 @@ public class VerifyActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("", "signInWithCredential:success");
                             Toast.makeText(VerifyActivity.this, "Verification Success", Toast.LENGTH_SHORT).show();
-                            Intent view = new Intent(VerifyActivity.this,RegisterActivity.class);
-                            view.putExtra("phone",phone.getText().toString());
+                            //if new user ask name else login
+                            Intent view = new Intent(VerifyActivity.this,PostLogin.class);
+                            //view.putExtra("phone",phone.getText().toString());
                             startActivity(view);
                         } else {
                             // Sign in failed, display a message and update the UI
+                            avi.setVisibility(View.GONE);
                             Log.w("", "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid

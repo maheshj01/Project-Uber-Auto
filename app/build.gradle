@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:17.0.3'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'com.google.android.gms:play-services-places:15.0.1'
     implementation 'com.wang.avi:library:2.1.3'
 
 }

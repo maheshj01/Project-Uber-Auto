@@ -43,7 +43,7 @@ public class profileFragment extends Fragment {
                     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                       if(mAuth.getCurrentUser()==null){ // user not signed in
                           Toast.makeText(getContext(), "auth state changed logged out", Toast.LENGTH_SHORT).show();
-                           startActivity(new Intent(getContext(),MainActivity.class));
+                           startActivity(new Intent(getContext(),VerifyActivity.class));
                       }
                       else{  // already signed in
                           Toast.makeText(getContext(), "user already signed in", Toast.LENGTH_SHORT).show();
