@@ -2,6 +2,7 @@ package com.project.uberauto;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -54,6 +55,7 @@ public class VerifyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(VerifyActivity.this,PostLogin.class));
+                finish();
             }
         });
         sendotp.setOnClickListener(new View.OnClickListener() {
@@ -159,6 +161,7 @@ public class VerifyActivity extends AppCompatActivity {
                             Intent view = new Intent(VerifyActivity.this,PostLogin.class);
                             //view.putExtra("phone",phone.getText().toString());
                             startActivity(view);
+                            finish();
                         } else {
                             // Sign in failed, display a message and update the UI
                             avi.setVisibility(View.GONE);
@@ -170,6 +173,25 @@ public class VerifyActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+    }
+    private Boolean exit = false;
+    @Override
+    public void onBackPressed() {
+        if (exit) {
+            finish(); // finish activity
+        } else {
+            Toast.makeText(this, "Press Back again to Exit.",
+                    Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000);
+
+        }
 
     }
 }

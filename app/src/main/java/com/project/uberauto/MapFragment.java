@@ -21,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,15 +32,18 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,7 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
 
     View mapview;
@@ -67,7 +72,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private AutoCompleteTextView msearchtext;
     private static final String TAG = "Map";
     private static final int ERROR_DIALOG_REQUEST=9001;
-    private PlaceAutoCompleteAdaptar placeAutoCompleteAdaptar;
+    private PlaceAutoCompleteAdaptar mPlaceAutoCompleteAdaptar;
+    private GoogleApiClient mGoogleApiClient;
+    private ImageView mylocation;
+    private static final LatLngBounds LAT_LNG_BOUNDS =new LatLngBounds(new LatLng(-40,-168),new LatLng(71,136));
    //private LocationClient
     // private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     @Override
@@ -88,12 +96,34 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             return mapview;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this); //You can also use LocationManager.GPS_PROVIDER and LocationManager.PASSIVE_PROVIDER
+        mylocation = mapview.findViewById(R.id.mylocation);
         msearchtext = mapview.findViewById(R.id.searchbar);
+        mylocation.setOnClickListener(gotomylocation);
         return mapview;
     }
+    View.OnClickListener gotomylocation = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
 
+        }
+    };
     private void init(){
-//        placeAutoCompleteAdaptar = new PlaceAutoCompleteAdaptar(getContext(),)
+        mGoogleApiClient = new GoogleApiClient
+                            .Builder(getContext())
+                            .addApi(Places.GEO_DATA_API)
+                            .addApi(Places.PLACE_DETECTION_API)
+                            .enableAutoManage(getActivity(),this)
+                            .build();
+
+        mPlaceAutoCompleteAdaptar = new PlaceAutoCompleteAdaptar(getActivity(),Places.getGeoDataClient(getActivity(),null),LAT_LNG_BOUNDS,null);
+        msearchtext.setAdapter(mPlaceAutoCompleteAdaptar);
+        msearchtext.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                geoLocate();
+                hideKeyboard(getContext(),getView());
+            }
+        });
         msearchtext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -109,6 +139,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         });
     }
 
+    public static void hideKeyboard(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(context .INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     private void geoLocate(){
         String searchstring = msearchtext.getText().toString();
         Geocoder geocoder = new Geocoder(getContext());
@@ -122,17 +157,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         if(list.size()>0){
             Address address = list.get(0);
             Log.d(TAG,"lOCATION FOUND :" +address.toString());
-            Toast.makeText(getContext(), "ADDREESS FOUND " +address.toString(), Toast.LENGTH_LONG).show();
+           // Toast.makeText(getContext(), "ADDREESS FOUND " +address.toString(), Toast.LENGTH_LONG).show();
             moveCamera(new LatLng(address.getLatitude(),address.getLongitude()),15f);
         }
         else{
-            Toast.makeText(getContext(), "failed to search location", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Location not found", Toast.LENGTH_LONG).show();
         }
 
     }
 
     private void getDeviceLocation() {
-        Log.d("", "getting current device loctaion");
+        Log.d("", "getting current device location");
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         try {
             // if permission granted
@@ -179,6 +214,41 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     }
 
     @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Toast.makeText(getContext(), "Connection Established", Toast.LENGTH_SHORT).show();
+        mlocationequest = new LocationRequest();
+        mlocationequest.setInterval(1000);
+        mlocationequest.setFastestInterval(1000);
+        mlocationequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);   //high battery drainage
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+       // Toast.makeText(getContext(), "Map is Ready", Toast.LENGTH_SHORT).show();
+        mMap = googleMap;
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(true);
+        getDeviceLocation();
+        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(getContext(), "permission not granted", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        init();
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if(mPreviousMarker != null)
+                    mPreviousMarker.remove();
+                mPreviousMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Destination"));
+
+            }
+        });
+    }
+
+
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
@@ -194,15 +264,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Toast.makeText(getContext(), "Connection Established", Toast.LENGTH_SHORT).show();
-        mlocationequest = new LocationRequest();
-        mlocationequest.setInterval(1000);
-        mlocationequest.setFastestInterval(1000);
-        mlocationequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);   //high battery drainage
-    }
-
-    @Override
     public void onConnectionSuspended(int i) {
 
     }
@@ -212,27 +273,4 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         Toast.makeText(getContext(), "Connection Lost", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(getContext(), "Map is Ready", Toast.LENGTH_SHORT).show();
-        mMap = googleMap;
-        getDeviceLocation();
-        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
-        init();
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                if(mPreviousMarker != null)
-                    mPreviousMarker.remove();
-                mPreviousMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Destination"));
-
-            }
-        });
-    }
 }

@@ -10,4 +10,7 @@
     <color name="cyan_500">#00BCD4</color>
     <color name="light_blue_500">#03A9F4</color>
     <color name="IndigoShade">#aab6fe</color>
+    <color name="BlueGray">#37474f</color>
+    <color name="Gray">#424242</color>
+    <color name="Black">#000</color>
 </resources>
