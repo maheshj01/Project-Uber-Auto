@@ -8,8 +8,9 @@
     tools:context=".NameActivity">
 
     <LinearLayout
+        android:id="@+id/last"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
+        android:layout_height="57dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -17,13 +18,13 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.552">
+        app:layout_constraintVertical_bias="0.742">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/lastname"
+            android:id="@+id/first"
             android:layout_width="283dp"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
@@ -32,7 +33,7 @@
             tools:layout_editor_absoluteY="191dp">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/last"
+                android:id="@+id/firstname"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Email or Phone"
@@ -41,7 +42,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/textinput1"
+            android:id="@+id/name"
             android:layout_width="283dp"
             android:layout_height="44dp"
             android:layout_marginBottom="16dp"
@@ -51,7 +52,7 @@
             android:layout_weight="2">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/name"
+                android:id="@+id/lastname"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Email or Phone"
@@ -61,4 +62,20 @@
         </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/next"
+        android:layout_width="wrap_content"
+        android:layout_height="47dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Next"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.921"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.984" />
 </android.support.constraint.ConstraintLayout>

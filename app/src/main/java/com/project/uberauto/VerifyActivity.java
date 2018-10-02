@@ -158,8 +158,8 @@ public class VerifyActivity extends AppCompatActivity {
                             Log.d("", "signInWithCredential:success");
                             Toast.makeText(VerifyActivity.this, "Verification Success", Toast.LENGTH_SHORT).show();
                             //if new user ask name else login
-                            Intent view = new Intent(VerifyActivity.this,PostLogin.class);
-                            //view.putExtra("phone",phone.getText().toString());
+                            Intent view = new Intent(VerifyActivity.this,NameActivity.class);
+                            view.putExtra("number",phone.getText().toString());
                             startActivity(view);
                             finish();
                         } else {
