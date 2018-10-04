@@ -159,7 +159,9 @@ public class VerifyActivity extends AppCompatActivity {
                             Toast.makeText(VerifyActivity.this, "Verification Success", Toast.LENGTH_SHORT).show();
                             //if new user ask name else login
                             Intent view = new Intent(VerifyActivity.this,NameActivity.class);
-                            view.putExtra("number",phone.getText().toString());
+                            Bundle bundle = new Bundle();
+                            bundle.putString("number",phone.getText().toString());
+                            view.putExtras(bundle);
                             startActivity(view);
                             finish();
                         } else {

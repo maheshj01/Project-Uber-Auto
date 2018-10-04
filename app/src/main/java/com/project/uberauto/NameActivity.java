@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,22 +23,35 @@ import org.json.JSONObject;
 public class NameActivity extends AppCompatActivity {
     private String url= "https://onkarbangale44.000webhostapp.com/Reg.php";
     private Button next;
-    EditText first,last;
-    private String phone;
+    EditText first,last;  // first and last name
+    private String phone; //phone number
+    private RadioGroup rgroup;
+    String currentUser;  // user / driver
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_name);
         next = findViewById(R.id.next);
         first = findViewById(R.id.firstname);
         last = findViewById(R.id.lastname);
-        Intent intent = getIntent();
-        phone = intent.getStringExtra("number");
+        Bundle bundle =getIntent().getExtras();
+        phone = bundle.getString("number");
+        rgroup = findViewById(R.id.rgroup);
+        currentUser = "user";
         StringRequest request;
+        rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton checked = findViewById(checkedId);
+                Toast.makeText(NameActivity.this, checked.getText().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!first.getText().toString().isEmpty()&&!last.getText().toString().isEmpty()) {
+                    Toast.makeText(NameActivity.this, "lOGIN Success for "+phone, Toast.LENGTH_SHORT).show();
                     Intent start = new Intent(NameActivity.this, PostLogin.class);
                     startActivity(start);
                 }
