@@ -25,11 +25,11 @@
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:background="@color/Gray"
             android:hint="Search for places,cities,zip codes etc"
             android:paddingLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
             android:paddingRight="5dp"
             android:singleLine="true"
             android:textColor="#fff"
@@ -44,6 +44,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="78dp"
             android:src="@drawable/ic_my_location_black_24dp" />
+
     </RelativeLayout>
 
 

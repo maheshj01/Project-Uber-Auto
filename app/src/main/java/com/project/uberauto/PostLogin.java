@@ -24,16 +24,16 @@ public class PostLogin extends AppCompatActivity implements BottomNavigationView
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
-                        Fragment home = new HomeFragment();
+                        HomeFragment home = new HomeFragment();
                         loadFragment(home);
                         break;
                     case R.id.nav_map:
-                        Fragment map = new MapFragment();
-                        loadFragment(map);
+
+                        loadFragment(new MapFragment());
                         break;
                     case R.id.nav_profile:
-                        Fragment profile = new profileFragment();
-                        loadFragment(profile);
+
+                        loadFragment(new profileFragment());
                         break;
                 }
                 return true;

@@ -80,8 +80,8 @@ public class VerifyActivity extends AppCompatActivity {
                 otp.requestFocus();
                 return;
             }
+            avi.show();
             PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mcode, code);
-
             //signing the user
             signInWithPhoneAuthCredential(credential);
         }
@@ -100,6 +100,7 @@ public class VerifyActivity extends AppCompatActivity {
 
         @Override  //on auto detect sms:success
         public void onVerificationCompleted(PhoneAuthCredential credential) {
+            avi.setVisibility(View.GONE);
             String code = credential.getSmsCode();
             Log.d("", "onVerificationCompleted:" + credential);
             if(code!=null) {

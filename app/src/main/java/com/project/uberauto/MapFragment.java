@@ -90,6 +90,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private GoogleApiClient mGoogleApiClient;
     private ImageView mylocation;
     private List<Polyline> polylines;
+    private static final int REQUEST_CODE_PERMISSION = 2;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -168), new LatLng(71, 136));
     private static final int[] COLORS = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary, R.color.light_blue_500, R.color.purple_500, R.color.primary_dark_material_light};
 
@@ -197,7 +198,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             Address address = list.get(0);
             Log.d(TAG, "lOCATION FOUND :" + address.toString());
             // Toast.makeText(getContext(), "ADDREESS FOUND " +address.toString(), Toast.LENGTH_LONG).show();
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), 15f);
+            LatLng destination = new LatLng(address.getLatitude(), address.getLongitude());
+            moveCamera(destination, 15f);
+            if(mPreviousMarker != null)
+                mPreviousMarker.remove();
+            mPreviousMarker = mMap.addMarker(new MarkerOptions().position(destination).title("Destination"));
             getRoutetoLocation(new LatLng(address.getLatitude(),address.getLongitude()));
         } else {
             Toast.makeText(getContext(), "Location not found", Toast.LENGTH_LONG).show();
@@ -213,7 +218,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 .key("AIzaSyB_FOWftbNi8uXdXXOJmrb0Y_MBqykux7E")
                 .build();
         routing.execute();
-
     }
 
     private void getDeviceLocation() {
@@ -276,28 +280,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         // Toast.makeText(getContext(), "Map is Ready", Toast.LENGTH_SHORT).show();
         mMap = googleMap;
         mMap.getUiSettings().setCompassEnabled(true);
+        String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
         // if Permission not already given
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            checkLocationPermission();
+            ActivityCompat.requestPermissions(getActivity(), new String[]{mPermission}, REQUEST_CODE_PERMISSION);
+            Toast.makeText(getContext(), "Location permission not granted", Toast.LENGTH_SHORT).show();
+            // checkLocationPermission();
             return;
         }
         else{
             mMap.setMyLocationEnabled(true);
             getDeviceLocation();
             init();
-            /*RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
-                    mylocation.getLayoutParams();
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
+            mylocation.getLayoutParams();
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
             layoutParams.addRule(5, RelativeLayout.TRUE);
             layoutParams.setMargins(0, 0, 30, 30);
-            mylocation.setLayoutParams(layoutParams);*/
+            mylocation.setLayoutParams(layoutParams);
         }
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -305,7 +306,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 if(mPreviousMarker != null)
                     mPreviousMarker.remove();
                 mPreviousMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Destination"));
-
             }
         });
     }

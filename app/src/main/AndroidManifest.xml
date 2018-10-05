@@ -26,10 +26,6 @@
         <activity
             android:name=".VerifyActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -49,8 +45,12 @@
         <activity
             android:name=".PostLogin"
             android:screenOrientation="portrait" />
-        <activity android:name=".NameActivity"></activity>
+        <activity android:name=".NameActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
     </application>
-
 </manifest>

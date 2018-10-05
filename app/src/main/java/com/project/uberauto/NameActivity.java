@@ -20,6 +20,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+
 public class NameActivity extends AppCompatActivity {
     private String url= "https://onkarbangale44.000webhostapp.com/Reg.php";
     private Button next;
@@ -27,6 +29,7 @@ public class NameActivity extends AppCompatActivity {
     private String phone; //phone number
     private RadioGroup rgroup;
     String currentUser;  // user / driver
+    int x;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +42,11 @@ public class NameActivity extends AppCompatActivity {
         phone = bundle.getString("number");
         rgroup = findViewById(R.id.rgroup);
         currentUser = "user";
-        StringRequest request;
         rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 RadioButton checked = findViewById(checkedId);
+                currentUser = checked.getText().toString();
                 Toast.makeText(NameActivity.this, checked.getText().toString(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -52,6 +55,7 @@ public class NameActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(!first.getText().toString().isEmpty()&&!last.getText().toString().isEmpty()) {
                     Toast.makeText(NameActivity.this, "lOGIN Success for "+phone, Toast.LENGTH_SHORT).show();
+                    registerUser();
                     Intent start = new Intent(NameActivity.this, PostLogin.class);
                     startActivity(start);
                 }
@@ -61,34 +65,50 @@ public class NameActivity extends AppCompatActivity {
         }
     });
 
-         request =new StringRequest(Request.Method.GET, url+"?first="+first+"&last="+ last+"&phone="+phone,
-            new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    try{
-                        JSONObject jsonObject=new JSONObject(response);
-                        if(!jsonObject.getBoolean("error"))
-                        {
-                            String obj=jsonObject.getString("error_msg");
-                            Toast.makeText(getApplicationContext(),obj,Toast.LENGTH_LONG).show();
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(), jsonObject.getString("error_msg"), Toast.LENGTH_LONG).show();
-                        }
+}
 
-                    }catch(JSONException e){
-                        e.printStackTrace();
+    public void registerUser() {
+        if (currentUser.equals("user")) {
+            x = 1;
+            Toast.makeText(this, "User Selected", Toast.LENGTH_SHORT).show();
+        } else {
+            x = 2;
+            Toast.makeText(this, "Driver Selected", Toast.LENGTH_SHORT).show();
+        }
+        StringRequest request = new StringRequest(Request.Method.GET, "https://onkarbangale44.000webhostapp.com/Reg.php" + "?currentUser=" + x + "&first=" + first + "&last=" + last + "&phone=" + "9423757172",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            if (!jsonObject.getBoolean("error")) {
+                                String obj = jsonObject.getString("error_msg");
+                                Toast.makeText(getApplicationContext(), "Success" + obj , Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), jsonObject.getString("error_msg"), Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String body;
+                if(error == null)
+                    Toast.makeText(getApplicationContext(),  "null response", Toast.LENGTH_LONG).show();
+                final String code = String.valueOf(error.networkResponse.statusCode);
+                try{
+                    body=new String(error.networkResponse.data,"UTF-8");
+                }catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
 
                 }
-            }, new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_LONG).show();
-        }
-    });
-        RequestQueue requestQueue= Volley.newRequestQueue(this);
+
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(request);
-}
+    }
 
 }
