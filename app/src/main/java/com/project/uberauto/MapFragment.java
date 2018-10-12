@@ -93,6 +93,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private static final int REQUEST_CODE_PERMISSION = 2;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -168), new LatLng(71, 136));
     private static final int[] COLORS = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary, R.color.light_blue_500, R.color.purple_500, R.color.primary_dark_material_light};
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     //    //private LocationClient
     // private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -125,26 +126,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         @Override
         public void onClick(View v) {
             if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+                Toast.makeText(getContext(), "failed to get Location permission not granted", Toast.LENGTH_SHORT).show();
                 return;
             }
-            mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+            // if permission already granted
+            Task location = mFusedLocationProviderClient.getLastLocation();
+            location.addOnCompleteListener(new OnCompleteListener() {
                 @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                            moveCamera(new LatLng(location.getLatitude(),location.getLatitude()),16);
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        //     Log.d(TAG,"location found", );
+                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            Toast.makeText(getContext(), "location permission required", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        mMap.setMyLocationEnabled(true);
+                        Location currentLocation = (Location) task.getResult();
+                        moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
                     } else {
-                        Toast.makeText(getContext(), "Location empty :(", Toast.LENGTH_SHORT).show();
+                        //    Log.d(TAG,"CURRENT LOCATION IS ",);
+                        Toast.makeText(getContext(), "unable to get current location", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-        }
+            }
     };
 
     private void init() {
@@ -291,14 +296,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         }
         else{
             mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
             getDeviceLocation();
             init();
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
+          /*  RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
             mylocation.getLayoutParams();
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
             layoutParams.addRule(5, RelativeLayout.TRUE);
-            layoutParams.setMargins(0, 0, 30, 30);
-            mylocation.setLayoutParams(layoutParams);
+            layoutParams.setMargins(0, 20, 30, 30);
+            mylocation.setLayoutParams(layoutParams);*/
         }
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -340,8 +346,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         }
     }
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    private void checkLocationPermission() {
+   /* private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -376,6 +381,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             }
         }
     }
+*/
 
 
     @Override

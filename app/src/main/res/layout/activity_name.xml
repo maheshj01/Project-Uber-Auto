@@ -7,47 +7,46 @@
     android:background="@drawable/animation_list"
     tools:context=".NameActivity">
 
-    <RadioGroup
-        android:id="@+id/rgroup"
-        android:layout_width="372dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/last"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.918">
+        <RadioGroup
+            android:id="@+id/rgroup"
+            android:layout_width="279dp"
+            android:layout_height="43dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.918">
 
-        <RadioButton
-            android:id="@+id/ruser"
-            android:layout_width="117dp"
-            android:layout_height="match_parent"
-            android:checked="true"
-            android:text="User"
-            android:textSize="16dp" />
+            <RadioButton
+                android:id="@+id/ruser"
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
+                android:checked="true"
+                android:text="User"
+                android:textSize="16dp" />
 
-        <RadioButton
-            android:id="@+id/rdriver"
-            android:layout_width="167dp"
-            android:layout_height="match_parent"
-            android:text="Driver"
-            android:textSize="16dp" />
+            <RadioButton
+                android:id="@+id/rdriver"
+                android:layout_width="167dp"
+                android:layout_height="match_parent"
+                android:text="Driver"
+                android:textSize="16dp" />
 
-    </RadioGroup>
+        </RadioGroup>
 
     <LinearLayout
-        android:id="@+id/last"
+        android:id="@+id/horizontal"
         android:layout_width="match_parent"
-        android:layout_height="62dp"
+        android:layout_height="52dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal"
+        android:weightSum="10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -56,38 +55,27 @@
         app:layout_constraintVertical_bias="0.759">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/first"
-            android:layout_width="291dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="8dp"
-            android:layout_weight="2"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="191dp">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/firstname"
-                android:layout_width="175dp"
+                android:id="@+id/first"
+                android:layout_width="203dp"
                 android:layout_height="match_parent"
-                android:hint="First Name"
-                android:textColor="#fff" />
+                android:layout_weight="5"
+                android:hint="First Name" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/name"
-            android:layout_width="283dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="2">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/lastname"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:hint="Last Name"
-                android:textColor="#fff" />
+                android:id="@+id/last"
+                android:layout_width="192dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:hint="Last Name" />
         </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>
@@ -110,4 +98,60 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.984" />
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avimain"
+        style="@style/AVLoadingIndicatorView.Small"
+        android:layout_width="46dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="260dp"
+        android:visibility="visible"
+        app:indicatorColor="@color/white"
+        app:indicatorName="BallPulseIndicator"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.923" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="101dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="I am a"
+        android:textSize="28dp"
+        android:textStyle="bold"
+        android:textColor="#fff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rgroup"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.607" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="57dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Welcome"
+        android:textColor="@color/white"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.46" />
 </android.support.constraint.ConstraintLayout>

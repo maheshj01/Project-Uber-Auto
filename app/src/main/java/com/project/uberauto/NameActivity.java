@@ -16,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,17 +31,21 @@ public class NameActivity extends AppCompatActivity {
     private RadioGroup rgroup;
     String currentUser;  // user / driver
     int x;
+    AVLoadingIndicatorView avi;
+    Boolean status;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_name);
         next = findViewById(R.id.next);
-        first = findViewById(R.id.firstname);
-        last = findViewById(R.id.lastname);
+        first = findViewById(R.id.first);
+        last = findViewById(R.id.last);
+        avi =findViewById(R.id.avimain);
+        avi.setVisibility(View.GONE);
         Bundle bundle =getIntent().getExtras();
-        phone = bundle.getString("number");
+        //phone = bundle.getString("number");
         rgroup = findViewById(R.id.rgroup);
+        status = false;
         currentUser = "user";
         rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -55,9 +60,14 @@ public class NameActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(!first.getText().toString().isEmpty()&&!last.getText().toString().isEmpty()) {
                     Toast.makeText(NameActivity.this, "lOGIN Success for "+phone, Toast.LENGTH_SHORT).show();
-                    registerUser();
-                    Intent start = new Intent(NameActivity.this, PostLogin.class);
-                    startActivity(start);
+                    avi.show();
+                    if(registerUser()){
+                        Intent start = new Intent(NameActivity.this, PostLogin.class);
+                        startActivity(start);
+                        finish();
+                    }else{
+
+                    }
                 }
                 else{
                     Toast.makeText(NameActivity.this, "first or last name left empty!", Toast.LENGTH_SHORT).show();
@@ -67,7 +77,7 @@ public class NameActivity extends AppCompatActivity {
 
 }
 
-    public void registerUser() {
+    public Boolean registerUser() {
         if (currentUser.equals("user")) {
             x = 1;
             Toast.makeText(this, "User Selected", Toast.LENGTH_SHORT).show();
@@ -75,13 +85,15 @@ public class NameActivity extends AppCompatActivity {
             x = 2;
             Toast.makeText(this, "Driver Selected", Toast.LENGTH_SHORT).show();
         }
-        StringRequest request = new StringRequest(Request.Method.GET, "https://onkarbangale44.000webhostapp.com/Reg.php" + "?currentUser=" + x + "&first=" + first + "&last=" + last + "&phone=" + "9423757172",
+        StringRequest request = new StringRequest(Request.Method.GET, "https://onkarbangale44.000webhostapp.com/Reg.php" + "?currentUser=" + x + "&fname=" + first.getText() + "&lname=" + last.getText() + "&number=" + "9423757172",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        avi.setVisibility(View.GONE);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             if (!jsonObject.getBoolean("error")) {
+                                status = true;
                                 String obj = jsonObject.getString("error_msg");
                                 Toast.makeText(getApplicationContext(), "Success" + obj , Toast.LENGTH_LONG).show();
                             } else {
@@ -95,20 +107,19 @@ public class NameActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 String body;
-                if(error == null)
-                    Toast.makeText(getApplicationContext(),  "null response", Toast.LENGTH_LONG).show();
-                final String code = String.valueOf(error.networkResponse.statusCode);
+                if(error == null) {
+                    Toast.makeText(getApplicationContext(), "null response", Toast.LENGTH_LONG).show();
+                }
                 try{
                     body=new String(error.networkResponse.data,"UTF-8");
                 }catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
-
                 }
-
             }
         });
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(request);
+        return status;
     }
 
 }
