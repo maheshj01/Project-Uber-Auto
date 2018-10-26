@@ -47,14 +47,14 @@
             android:src="@drawable/ic_my_location_black_24dp" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/directionbtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="48dp"
             android:layout_marginBottom="98dp"
-            android:text="Button" />
+            android:text="Get Directions" />
 
     </RelativeLayout>
 

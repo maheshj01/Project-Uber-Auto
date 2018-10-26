@@ -1,8 +1,12 @@
 package com.project.uberauto;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +37,7 @@ public class NameActivity extends AppCompatActivity {
     int x;
     AVLoadingIndicatorView avi;
     Boolean status;
+    private SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +50,14 @@ public class NameActivity extends AppCompatActivity {
         Bundle bundle =getIntent().getExtras();
         //phone = bundle.getString("number");
         rgroup = findViewById(R.id.rgroup);
-        status = false;
+        status = true;
         currentUser = "user";
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(preferences.getBoolean("log",false)){
+            Intent view = new Intent(NameActivity.this,PostLogin.class);
+            startActivity(view);
+            finish();
+        }
         rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -58,18 +69,20 @@ public class NameActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                avi.show();
                 if(!first.getText().toString().isEmpty()&&!last.getText().toString().isEmpty()) {
                     Toast.makeText(NameActivity.this, "lOGIN Success for "+phone, Toast.LENGTH_SHORT).show();
-                    avi.show();
-                    if(registerUser()){
+                    registerUser(); // if register success
+                        avi.setVisibility(View.GONE);
+                        preferences.edit().putBoolean("log",true).apply();
                         Intent start = new Intent(NameActivity.this, PostLogin.class);
                         startActivity(start);
                         finish();
-                    }else{
-
-                    }
+                        avi.setVisibility(View.GONE);
+                       // Toast.makeText(NameActivity.this, "failed to register", Toast.LENGTH_SHORT).show();
                 }
                 else{
+                    avi.setVisibility(View.GONE);
                     Toast.makeText(NameActivity.this, "first or last name left empty!", Toast.LENGTH_SHORT).show();
             }
         }
@@ -93,13 +106,13 @@ public class NameActivity extends AppCompatActivity {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             if (!jsonObject.getBoolean("error")) {
-                                status = true;
                                 String obj = jsonObject.getString("error_msg");
                                 Toast.makeText(getApplicationContext(), "Success" + obj , Toast.LENGTH_LONG).show();
                             } else {
                                 Toast.makeText(getApplicationContext(), jsonObject.getString("error_msg"), Toast.LENGTH_LONG).show();
                             }
-                        } catch (JSONException e) {
+                        } catch (JSONException e)
+                        {
                             e.printStackTrace();
                         }
                     }
@@ -111,14 +124,16 @@ public class NameActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "null response", Toast.LENGTH_LONG).show();
                 }
                 try{
-                    body=new String(error.networkResponse.data,"UTF-8");
-                }catch (UnsupportedEncodingException e) {
+                    body=new String(error.networkResponse.data,"UTF-8");   // no internet error
+                 }catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
         });
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(request);
+        Log.d("status=",status.toString());
+        Toast.makeText(this, "status=" + status.toString(), Toast.LENGTH_SHORT).show();
         return status;
     }
 

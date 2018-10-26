@@ -1,9 +1,11 @@
 package com.project.uberauto;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -28,12 +30,22 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.AvoidType;
+import com.akexorcist.googledirection.constant.RequestResult;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Step;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import com.directions.route.AbstractRouting;
 import com.directions.route.Route;
 import com.directions.route.RouteException;
@@ -68,7 +80,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener, LocationListener, RoutingListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 
 
     View mapview;
@@ -94,6 +106,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -168), new LatLng(71, 136));
     private static final int[] COLORS = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary, R.color.light_blue_500, R.color.purple_500, R.color.primary_dark_material_light};
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    Button direction;
 
     //    //private LocationClient
     // private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -115,10 +128,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return mapview;
         }
+
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this); //You can also use LocationManager.GPS_PROVIDER and LocationManager.PASSIVE_PROVIDER
         mylocation = mapview.findViewById(R.id.mylocation);
         msearchtext = mapview.findViewById(R.id.searchbar);
         mylocation.setOnClickListener(gotomylocation);
+        direction = mapview.findViewById(R.id.directionbtn);
+        direction.setOnClickListener(getDirections);
         return mapview;
     }
 
@@ -140,7 +156,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                             Toast.makeText(getContext(), "location permission required", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        mMap.setMyLocationEnabled(true);
                         Location currentLocation = (Location) task.getResult();
                         moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
                     } else {
@@ -149,7 +164,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     }
                 }
             });
-            }
+        }
     };
 
     private void init() {
@@ -157,7 +172,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 .Builder(getContext())
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(getActivity(), this)
+                .enableAutoManage(getActivity(),this)
                 .build();
 
         mPlaceAutoCompleteAdaptar = new PlaceAutoCompleteAdaptar(getActivity(), Places.getGeoDataClient(getActivity(), null), LAT_LNG_BOUNDS, null);
@@ -205,25 +220,71 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             // Toast.makeText(getContext(), "ADDREESS FOUND " +address.toString(), Toast.LENGTH_LONG).show();
             LatLng destination = new LatLng(address.getLatitude(), address.getLongitude());
             moveCamera(destination, 15f);
-            if(mPreviousMarker != null)
+            if (mPreviousMarker != null)
                 mPreviousMarker.remove();
             mPreviousMarker = mMap.addMarker(new MarkerOptions().position(destination).title("Destination"));
-            getRoutetoLocation(new LatLng(address.getLatitude(),address.getLongitude()));
+            Log.d("Dest:Lat "+ address.getLatitude() + " long"+address.getLongitude(),"Src:Lat"+ mlocation.getLatitude() +" " + mlocation.getLongitude());
         } else {
             Toast.makeText(getContext(), "Location not found", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void getRoutetoLocation(LatLng destinationlatlng){
-        Routing routing = new Routing.Builder()
-                .travelMode(AbstractRouting.TravelMode.BIKING)
-                .withListener(this)
-                .alternativeRoutes(false)
-                .waypoints(new LatLng(mlocation.getLatitude(),mlocation.getLongitude()),destinationlatlng)
-                .key("AIzaSyB_FOWftbNi8uXdXXOJmrb0Y_MBqykux7E")
-                .build();
-        routing.execute();
-    }
+    View.OnClickListener getDirections = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getContext(), "Location Permission not granted", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Task location = mFusedLocationProviderClient.getLastLocation();
+            location.addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    mlocation = (Location) task.getResult();
+                }
+            });
+            final LatLng dest = new LatLng(mPreviousMarker.getPosition().latitude, mPreviousMarker.getPosition().longitude);
+            final LatLng origin = new LatLng(mlocation.getLatitude(), mlocation.getLongitude());
+            Log.d("origin=" + origin.latitude + " " + origin.longitude,"destination" + dest.latitude + " " + dest.longitude);
+            /*LatLng origin = new LatLng(37.7849569, -122.4068855);
+            LatLng dest= new LatLng(37.7814432, -122.4460177);*/
+            GoogleDirection.withServerKey("AIzaSyB_FOWftbNi8uXdXXOJmrb0Y_MBqykux7E")//AIzaSyD0A9AV_LSOWyVaeJ1bMWiQUQtoH5Kb5aU")
+                    .from(origin)
+                    .to(dest)
+                    .transportMode(TransportMode.DRIVING)
+                    .avoid(AvoidType.FERRIES)
+                    .avoid(AvoidType.HIGHWAYS)
+                    .execute(new DirectionCallback() {
+                        @Override
+                        public void onDirectionSuccess(Direction direction, String rawBody) {
+                            if (direction.isOK()) {
+                                Toast.makeText(getContext(), "direction success", Toast.LENGTH_SHORT).show();
+                                String status = direction.getStatus();
+                                com.akexorcist.googledirection.model.Route route = direction.getRouteList().get(0);
+                                Leg leg = route.getLegList().get(0);
+                                List<Step> list = leg.getStepList();
+                                if (status.equals(RequestResult.OK)) {
+                                    ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
+                                    PolylineOptions polylineOptions = DirectionConverter.createPolyline(getContext(), directionPositionList, 4,getResources().getColor(R.color.blue_500));
+                                    mMap.addPolyline(polylineOptions);
+                                }
+                                else if(status.equals(RequestResult.OVER_QUERY_LIMIT)){
+                                    Toast.makeText(getContext(), "Limit exceeded", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Toast.makeText(getContext(), direction.getErrorMessage() + direction.getStatus(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onDirectionFailure(Throwable t) {
+                            Toast.makeText(getContext(),"direction failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            //DownloadTask downloadTask = new DownloadTask();
+        }
+    };
 
     private void getDeviceLocation() {
         Log.d("", "getting current device location");
@@ -293,8 +354,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             Toast.makeText(getContext(), "Location permission not granted", Toast.LENGTH_SHORT).show();
             // checkLocationPermission();
             return;
-        }
-        else{
+        } else {
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             getDeviceLocation();
@@ -309,80 +369,47 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if(mPreviousMarker != null)
+                if (mPreviousMarker != null) {
                     mPreviousMarker.remove();
-                mPreviousMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Destination"));
+                    mPreviousMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Destination"));
+                }
+                else
+                    mPreviousMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Destination"));
             }
         });
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("permission ","Granted");
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(getContext(),
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        mMap.setMyLocationEnabled(true);
-                        Toast.makeText(getContext(), "Location Permission granted", Toast.LENGTH_SHORT).show();
-                        getDeviceLocation();
-                        init();
-                    }
-
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(getContext(), "permission denied", Toast.LENGTH_LONG).show();
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+            if (permissions.length == 1 &&
+                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
                 }
-                return;
-            }
-        }
-    }
-
-   /* private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(getContext())
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(getActivity(),
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
-                            }
-                        })
-                        .create()
-                        .show();
-
-
+                Toast.makeText(getContext(), "Location Permission granted", Toast.LENGTH_SHORT).show();
+                getDeviceLocation();
+                init();
             } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                Toast.makeText(getContext(), "location permission denied by user", Toast.LENGTH_SHORT).show();
             }
         }
     }
-*/
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mGoogleApiClient.stopAutoManage(getActivity());
+        mGoogleApiClient.disconnect();
+    }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -409,50 +436,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         Toast.makeText(getContext(), "Connection Lost", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onRoutingFailure(RouteException e) {
-        if(e != null) {
-            Toast.makeText(getContext(), "Routing Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }else {
-            Toast.makeText(getContext(), "Something went wrong while Routing, Try again", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onRoutingStart() {
-
-    }
-
-    @Override
-    public void onRoutingSuccess(ArrayList<Route> route, int index) {
-        if (polylines.size() > 0) {
-            for (Polyline poly : polylines) {
-                poly.remove();
-            }
-        }
-
-        polylines = new ArrayList<>();
-        //add route(s) to the map.
-        for (int i = 0; i < route.size(); i++) {
-
-            //In case of more than 5 alternative routes
-            int colorIndex = i % COLORS.length;
-
-            PolylineOptions polyOptions = new PolylineOptions();
-            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
-            polyOptions.width(10 + i * 3);
-            polyOptions.addAll(route.get(i).getPoints());
-            Polyline polyline = mMap.addPolyline(polyOptions);
-            polylines.add(polyline);
-
-            Toast.makeText(getContext(), "Route " + (i + 1) + ": distance - " + route.get(i).getDistanceValue() + ": duration - " + route.get(i).getDurationValue(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onRoutingCancelled() {
-
-    }
     private void eraseRoute(){
         for(Polyline line:polylines){
             line.remove();
