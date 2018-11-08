@@ -48,16 +48,12 @@ public class NameActivity extends AppCompatActivity {
         avi =findViewById(R.id.avimain);
         avi.setVisibility(View.GONE);
         Bundle bundle =getIntent().getExtras();
-        //phone = bundle.getString("number");
+        phone = bundle.getString("number");
         rgroup = findViewById(R.id.rgroup);
         status = true;
         currentUser = "user";
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(preferences.getBoolean("log",false)){
-            Intent view = new Intent(NameActivity.this,PostLogin.class);
-            startActivity(view);
-            finish();
-        }
+
         rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -74,7 +70,6 @@ public class NameActivity extends AppCompatActivity {
                     Toast.makeText(NameActivity.this, "lOGIN Success for "+phone, Toast.LENGTH_SHORT).show();
                     registerUser(); // if register success
                         avi.setVisibility(View.GONE);
-                        preferences.edit().putBoolean("log",true).apply();
                         Intent start = new Intent(NameActivity.this, PostLogin.class);
                         startActivity(start);
                         finish();
@@ -98,7 +93,7 @@ public class NameActivity extends AppCompatActivity {
             x = 2;
             Toast.makeText(this, "Driver Selected", Toast.LENGTH_SHORT).show();
         }
-        StringRequest request = new StringRequest(Request.Method.GET, "https://onkarbangale44.000webhostapp.com/Reg.php" + "?currentUser=" + x + "&fname=" + first.getText() + "&lname=" + last.getText() + "&number=" + "9423757172",
+        StringRequest request = new StringRequest(Request.Method.GET, "https://onkarbangale44.000webhostapp.com/Reg.php" + "?currentUser=" + x + "&fname=" + first.getText() + "&lname=" + last.getText() + "&number=" + phone,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

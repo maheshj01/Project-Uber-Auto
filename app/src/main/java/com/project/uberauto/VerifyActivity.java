@@ -1,8 +1,10 @@
 package com.project.uberauto;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +41,7 @@ public class VerifyActivity extends AppCompatActivity {
     EditText phone,otp;
     Button verify;
     PhoneAuthProvider.ForceResendingToken mResendToken;
+    private SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +54,16 @@ public class VerifyActivity extends AppCompatActivity {
         otp = findViewById(R.id.otp);
         verify = findViewById(R.id.vbutton);  //btn
         verify.setOnClickListener(verifyotp);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(preferences.getBoolean("log",false)){
+            Intent view = new Intent(VerifyActivity.this,PostLogin.class);
+            startActivity(view);
+            finish();
+        }
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(VerifyActivity.this,PostLogin.class));
+                startActivity(new Intent(VerifyActivity.this,NameActivity.class));
                 finish();
             }
         });
@@ -159,6 +168,7 @@ public class VerifyActivity extends AppCompatActivity {
                             Log.d("", "signInWithCredential:success");
                             Toast.makeText(VerifyActivity.this, "Verification Success", Toast.LENGTH_SHORT).show();
                             //if new user ask name else login
+                            preferences.edit().putBoolean("log",true).apply();
                             Intent view = new Intent(VerifyActivity.this,NameActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putString("number",phone.getText().toString());

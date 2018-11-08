@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -107,6 +108,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private static final int[] COLORS = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary, R.color.light_blue_500, R.color.purple_500, R.color.primary_dark_material_light};
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     Button direction;
+    SharedPreferences sharedPreferences;
 
     //    //private LocationClient
     // private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -166,6 +168,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             });
         }
     };
+    public void Storelocation(Location loc)
+    {
+        double lat=loc.getLatitude();
+        double longitude=loc.getLongitude();
+
+    }
 
     private void init() {
         mGoogleApiClient = new GoogleApiClient
@@ -252,8 +260,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     .from(origin)
                     .to(dest)
                     .transportMode(TransportMode.DRIVING)
-                    .avoid(AvoidType.FERRIES)
-                    .avoid(AvoidType.HIGHWAYS)
+               /*     .avoid(AvoidType.FERRIES)
+                    .avoid(AvoidType.HIGHWAYS)*/
                     .execute(new DirectionCallback() {
                         @Override
                         public void onDirectionSuccess(Direction direction, String rawBody) {

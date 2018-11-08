@@ -4,7 +4,7 @@
     android:id="@+id/profilefrag"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="#e8ecf2"
     tools:context=".profileFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -14,7 +14,9 @@
         android:layout_width="140dp"
         android:layout_height="61dp"
         android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="284dp"
+        android:layout_marginBottom="314dp"
         android:text="Logout" />
 </RelativeLayout>
