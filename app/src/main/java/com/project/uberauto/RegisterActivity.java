@@ -64,6 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
         registerbtn = findViewById(R.id.signupbtn);
         registerbtn.setOnClickListener(registerUser);
         avi = findViewById(R.id.avimain);
+        avi.setVisibility(View.INVISIBLE);
         textlogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +105,6 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(RegisterActivity.this, "City is empty", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             avi.show();
             mAuth.createUserWithEmailAndPassword(email.getText().toString().trim(), passwd.getText().toString().trim())
                     .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {

@@ -37,11 +37,10 @@ public class VerifyActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     AVLoadingIndicatorView avi;
     String mcode;
-    TextView sendotp,skip;
+    TextView sendotp,skip,msg;
     EditText phone,otp;
     Button verify;
     PhoneAuthProvider.ForceResendingToken mResendToken;
-    private SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,11 +53,12 @@ public class VerifyActivity extends AppCompatActivity {
         otp = findViewById(R.id.otp);
         verify = findViewById(R.id.vbutton);  //btn
         verify.setOnClickListener(verifyotp);
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(preferences.getBoolean("log",false)){
-            Intent view = new Intent(VerifyActivity.this,PostLogin.class);
-            startActivity(view);
-            finish();
+        avi.setVisibility(View.INVISIBLE);
+        msg = findViewById(R.id.textView5);
+        msg.setVisibility(View.INVISIBLE);
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null && getApplicationContext().getSharedPreferences("phonecache",MODE_PRIVATE).getString("phone","9423757172")!=null){
+           startActivity(new Intent(VerifyActivity.this,PostLogin.class));
+           finish();
         }
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +71,8 @@ public class VerifyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
             if(phone.getText().toString().length()==10) {
+                msg.setVisibility(View.VISIBLE);
+                avi.show();
                 sendOtp(phone.getText().toString());
             }
             else{
@@ -114,6 +116,7 @@ public class VerifyActivity extends AppCompatActivity {
             Log.d("", "onVerificationCompleted:" + credential);
             if(code!=null) {
                 Toast.makeText(VerifyActivity.this, "Sms Detected", Toast.LENGTH_SHORT).show();
+                msg.setText("OTP Verified :)");
                 signInWithPhoneAuthCredential(credential);
                 otp.setText(code);
             }
@@ -131,6 +134,7 @@ public class VerifyActivity extends AppCompatActivity {
 
             } else if (e instanceof FirebaseTooManyRequestsException) {
                 // The SMS quota for the project has been exceeded
+                msg.setText("OTP Request out of Service :( ");
                 Toast.makeText(VerifyActivity.this, "Sms Limit exceeded please try again later ", Toast.LENGTH_SHORT).show();
             }
 
@@ -147,6 +151,7 @@ public class VerifyActivity extends AppCompatActivity {
 
             Log.d("", "onCodeSent:" + verificationId);
             Toast.makeText(VerifyActivity.this, "code sent please wait", Toast.LENGTH_SHORT).show();
+            msg.setText("Otp Sent!,waiting to Auto Detect Sms");
             // Save verification ID and resending token so we can use them later
             mcode = verificationId;
             mResendToken = token;
@@ -157,7 +162,6 @@ public class VerifyActivity extends AppCompatActivity {
     };
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        avi.show();
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -167,8 +171,10 @@ public class VerifyActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("", "signInWithCredential:success");
                             Toast.makeText(VerifyActivity.this, "Verification Success", Toast.LENGTH_SHORT).show();
+                            SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences("phonecache",MODE_PRIVATE).edit();
+                            editor.putString("phone",phone.getText().toString());
+                            editor.commit();
                             //if new user ask name else login
-                            preferences.edit().putBoolean("log",true).apply();
                             Intent view = new Intent(VerifyActivity.this,NameActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putString("number",phone.getText().toString());
@@ -186,8 +192,8 @@ public class VerifyActivity extends AppCompatActivity {
                         }
                     }
                 });
-
     }
+
     private Boolean exit = false;
     @Override
     public void onBackPressed() {

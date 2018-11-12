@@ -4,19 +4,36 @@
     android:id="@+id/profilefrag"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#e8ecf2"
+    android:background="@drawable/gradient_2"
     tools:context=".profileFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="177dp"
+            android:layout_height="162dp"
+            android:src="@drawable/profile"
+            android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
+            android:layout_marginTop="51dp"/>
+
     <Button
-        android:id="@+id/logout"
-        android:layout_width="140dp"
-        android:layout_height="61dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="284dp"
-        android:layout_marginBottom="314dp"
-        android:text="Logout" />
+            android:id="@+id/logout"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:background="@color/white"
+            android:textStyle="bold"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="77dp"
+            android:text="Logout"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:textSize="22dp"
+            android:layout_marginTop="244dp"
+            android:id="@+id/textname"/>
 </RelativeLayout>

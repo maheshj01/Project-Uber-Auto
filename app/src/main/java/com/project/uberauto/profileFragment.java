@@ -36,7 +36,6 @@ public class profileFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 mAuth = FirebaseAuth.getInstance();
                 FirebaseAuth.AuthStateListener listener = new FirebaseAuth.AuthStateListener() {
                     @Override

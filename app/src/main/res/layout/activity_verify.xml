@@ -6,110 +6,111 @@
     android:background="@drawable/animation_list"
     android:layout_width="match_parent">
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="57dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="80dp"
+            android:orientation="horizontal"
+            android:weightSum="10"
+            app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.682"
+            android:id="@+id/linearLayout" android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            app:layout_constraintHorizontal_bias="0.0">
+
+        <EditText
+                android:id="@+id/phone"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="7"
+                android:hint="Phone number"
+                android:inputType="number"
+                android:maxLength="10"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/vbutton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.601"/>
+
+        <TextView
+                android:id="@+id/textView2"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="3"
+                android:textColor="@color/white"
+                android:text="Send OTP"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/phone"
+                tools:layout_editor_absoluteY="200dp"/>
+    </LinearLayout>
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="200dp"
-        android:layout_height="58dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/vbutton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.925">
+            android:id="@+id/textInputLayout"
+            android:layout_width="185dp"
+            android:layout_height="59dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/vbutton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.968" app:layout_constraintHorizontal_bias="0.503">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/otp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="OTP"
-            android:inputType="number"
-            android:maxLength="6"
-            android:textAlignment="center"
-            android:textColor="@color/white" />
+                android:id="@+id/otp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="OTP"
+                android:inputType="number"
+                android:maxLength="6"
+                android:textAlignment="center"
+                android:textColor="@color/white"/>
 
     </android.support.design.widget.TextInputLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="57dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="80dp"
-        android:orientation="horizontal"
-        android:weightSum="10"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.876"
-        tools:layout_editor_absoluteX="0dp">
-
-        <EditText
-            android:id="@+id/phone"
-            android:layout_width="0dp"
-            android:layout_height="45dp"
+    <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/aviverify"
+            style="@style/AVLoadingIndicatorView.Small"
+            android:layout_width="45dp"
+            android:layout_height="35dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="7"
-            android:hint="Phone"
-            android:inputType="number"
-            android:maxLength="10"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/vbutton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.601" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="0dp"
-            android:layout_height="38dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_weight="3"
-            android:text="Send OTP"
-            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            app:indicatorColor="@color/white"
+            app:indicatorName="BallPulseIndicator"
+            app:layout_constraintBottom_toTopOf="@+id/vbutton"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/phone"
-            tools:layout_editor_absoluteY="200dp" />
-    </LinearLayout>
-
-    <com.wang.avi.AVLoadingIndicatorView
-        android:id="@+id/aviverify"
-        style="@style/AVLoadingIndicatorView.Small"
-        android:layout_width="45dp"
-        android:layout_height="35dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:visibility="invisible"
-        app:indicatorColor="@color/white"
-        app:indicatorName="BallPulseIndicator"
-        app:layout_constraintBottom_toTopOf="@+id/vbutton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.772" />
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.84"/>
 
     <Button
-        android:id="@+id/vbutton"
-        android:layout_width="191dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="124dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:background="@color/white"
-        android:text="Verfiy"
-        android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent" />
+            android:id="@+id/vbutton"
+            android:layout_width="182dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="124dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@color/white"
+            android:text="Verfiy"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.503"
+            app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/skip"
@@ -125,6 +126,41 @@
         app:layout_constraintHorizontal_bias="0.974"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+            android:text="Please Wait..."
+            android:layout_width="340dp"
+            android:layout_height="15dp"
+            android:maxLines="2"
+            android:gravity="center_horizontal"
+            android:id="@+id/textView5"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintVertical_bias="0.0"/>
+    <TextView
+            android:text="Login"
+            android:layout_width="79dp"
+            android:layout_height="48dp"
+            android:id="@+id/textView6"
+            android:textSize="25dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintVertical_bias="0.228"/>
 
 
 </android.support.constraint.ConstraintLayout>
