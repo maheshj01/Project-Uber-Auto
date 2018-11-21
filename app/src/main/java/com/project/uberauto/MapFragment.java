@@ -84,7 +84,7 @@ import java.util.List;
 import static android.content.Context.MODE_PRIVATE;
 
 
-public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener,GoogleMap.OnMarkerClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
+public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 
 
     Dialog dcard ;
@@ -144,7 +144,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         mylocation.setOnClickListener(gotomylocation);
         direction = mapview.findViewById(R.id.directionbtn);
         direction.setOnClickListener(getDirections);
-        Log.d("User ----->",NameActivity.currentUser);
         return mapview;
     }
 
@@ -168,29 +167,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                         }
                         Location currentLocation = (Location) task.getResult();
                         moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
-                        db.collection("Users")
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if(task.isSuccessful()){
-                                            for(QueryDocumentSnapshot doc:task.getResult()) {
-                                                if(doc.getString("Lat")!=null) {
-                                                    String lat = doc.getString("Lat");
-                                                    String lan = doc.getString("Lan");
-                                                    mMap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(lat), Double.valueOf(lan)))).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.taxismall));
-                                                }
-                                                }
-                                        }else{
-
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                            }
-                        });
                     } else {
                         //    Log.d(TAG,"CURRENT LOCATION IS ",);
                         Toast.makeText(getContext(), "unable to get current location", Toast.LENGTH_SHORT).show();
@@ -412,6 +388,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
             getDeviceLocation();
             init();
         }
+        showNearBy();
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -422,6 +399,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                 }
                 else
                     mPreviousMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Destination"));
+            }
+        });
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Toast.makeText(getContext(), "MARKER CLICKED", Toast.LENGTH_SHORT).show();
+                show_card();
+                return false;
             }
         });
     }
@@ -449,6 +435,36 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                 Toast.makeText(getContext(), "location permission denied by user", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public void showNearBy(){
+        db.collection("User")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for(QueryDocumentSnapshot doc:task.getResult()) {
+                                if(doc.getString("Lat")!=null) {  // check state if not offline
+                                    String lat = doc.getString("Lat");
+                                    String lan = doc.getString("Lan");
+                                    Log.d(doc.getString("First_Name") + doc.getString("Last_Name"),"------*****");
+                                   /* String phoneno = doc.getString("Phone_Number");
+                                    Toast.makeText(getContext(), "phone: " + phone , Toast.LENGTH_SHORT).show();*/
+                                   // Log.d("phone no---> ",phoneno);
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(lat), Double.valueOf(lan))).title(phone)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.taxismall));
+                                }
+                            }
+                        }else{
+
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     @Override
@@ -495,15 +511,32 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         //Snackbar.make(View,"Icon Clicked",Snackbar.LENGTH_LONG);
         Toast.makeText(getContext(), "Icon clicked", Toast.LENGTH_SHORT).show();
     }
+
     public void show_card()
     {
         dcard.setContentView(R.layout.driver_dialog);
-        dcard.show();
-    }
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+     /*   db.collection("Users")
+                .document(doc)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task){
+                        Button book = mapview.findViewById(R.id.button);
+                        TextView name = mapview.findViewById(R.id.name);
+                        TextView phone = mapview.findViewById(R.id.phone);
+                        DocumentSnapshot doc = task.getResult();
+                        if(doc.exists()){
+                            name.setText(doc.getString("First_Name") + " " +doc.getString("Lasr_Name"));
+                            phone.setText(doc.getString("Phone_Number"));
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        show_card();
-        return true;
+            }
+        });
+       */ dcard.show();
     }
 }

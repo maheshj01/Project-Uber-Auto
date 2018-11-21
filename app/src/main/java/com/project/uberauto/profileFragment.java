@@ -2,6 +2,7 @@ package com.project.uberauto;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,10 +17,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
@@ -30,6 +34,7 @@ public class profileFragment extends Fragment {
     ImageView status;
     TextView profilename;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    SessionManager session;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +42,7 @@ public class profileFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             Bundle savedInstanceState){
         // Inflate the layout for this fragment first
         view = inflater.inflate(R.layout.fragment_profile, container, false);
         logout = view.findViewById(R.id.logout);
@@ -64,6 +69,22 @@ public class profileFragment extends Fragment {
                 mAuth.signOut();
             }
         });
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        profilename.setText(sharedPref.getString("sharedphone","defvalue"));
+        /*        db.collection("Users")
+                .document(session.get("sharedphone").toString())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                   profilename.setText(documentSnapshot.getString("First_Name")+ " " + documentSnapshot.getString("Last_Name"));
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });*/
         status = view.findViewById(R.id.statusicon);
         spinner.setItems("Available","Running","Offline");
         spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {

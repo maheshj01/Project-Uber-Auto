@@ -1,5 +1,6 @@
 package com.project.uberauto;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -72,7 +73,8 @@ public class VerifyActivity extends AppCompatActivity {
                 Toast.makeText(VerifyActivity.this, checked.getText().toString(), Toast.LENGTH_SHORT).show();
             }
         });
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null && getApplicationContext().getSharedPreferences("phonecache",MODE_PRIVATE).getString("phone","9423757172")!=null){
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null || sharedPref.getString("sharedphone","defvalue")!=null){
            startActivity(new Intent(VerifyActivity.this,PostLogin.class));
            finish();
         }
@@ -191,8 +193,12 @@ public class VerifyActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("", "signInWithCredential:success");
                             Toast.makeText(VerifyActivity.this, "Verification Success", Toast.LENGTH_SHORT).show();
-                            SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences("phonecache",MODE_PRIVATE).edit();
+                           /* SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences("phonecache",MODE_PRIVATE).edit();
                             editor.putString("phone",phone.getText().toString());
+                            editor.commit();*/
+                            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("sharedphone",phone.getText().toString());
                             editor.commit();
                             //if new user? ask name: else login;
                             db.collection(currentUser)

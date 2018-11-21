@@ -18,7 +18,7 @@ public class SessionManager {
         }
 
         public String get(String key) {
-            String value = prefs.getString(key,"");
+            String value = prefs.getString(key,"9423757172");
             return value;
         }
 }

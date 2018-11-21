@@ -39,7 +39,7 @@ public class NameActivity extends AppCompatActivity {
     private String url= "https://onkarbangale44.000webhostapp.com/Reg.php";
     private Button next;
     EditText first,last;  // first and last name
-    private String phone; //phone number
+    public static String phone; //phone number
     private RadioGroup rgroup;
     public static String currentUser;  // user / driver
     int x;
@@ -83,7 +83,6 @@ public class NameActivity extends AppCompatActivity {
             }
         }
     });
-
 }
 
     public void updateUser(String firstname,String  lastname){
@@ -117,8 +116,8 @@ public class NameActivity extends AppCompatActivity {
         });
     }
 
-    public Boolean registerUser() {
-        if (currentUser.equals("user")) {
+    public Boolean registerUser(){
+        if (currentUser.equals("user")){
             x = 1;
             Toast.makeText(this, "User Selected", Toast.LENGTH_SHORT).show();
         } else {
