@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -83,9 +84,10 @@ import java.util.List;
 import static android.content.Context.MODE_PRIVATE;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
+public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 
 
+    Dialog dcard ;
     View mapview;
     private GoogleMap mMap;
     GoogleApiClient googleapiclient;
@@ -123,6 +125,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        dcard=new Dialog(getContext());
+        dcard.setCanceledOnTouchOutside(true);
         mapview = inflater.inflate(R.layout.fragment_map, container, false);
         //   isServiceOk();
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -484,5 +488,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             line.remove();
         }
         polylines.clear();
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        //Snackbar.make(View,"Icon Clicked",Snackbar.LENGTH_LONG);
+        Toast.makeText(getContext(), "Icon clicked", Toast.LENGTH_SHORT).show();
+    }
+    public void show_card()
+    {
+        dcard.setContentView(R.layout.driver_dialog);
+        dcard.show();
     }
 }
