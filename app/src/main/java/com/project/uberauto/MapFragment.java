@@ -84,7 +84,7 @@ import java.util.List;
 import static android.content.Context.MODE_PRIVATE;
 
 
-public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
+public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClickListener,GoogleMap.OnMarkerClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
 
 
     Dialog dcard ;
@@ -499,5 +499,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     {
         dcard.setContentView(R.layout.driver_dialog);
         dcard.show();
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        show_card();
+        return true;
     }
 }
