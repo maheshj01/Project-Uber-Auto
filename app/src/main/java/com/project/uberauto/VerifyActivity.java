@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -153,7 +154,7 @@ public class VerifyActivity extends AppCompatActivity {
                 // The SMS quota for the project has been exceeded
                 msg.setText("OTP Request out of Service :( ");
                 sendotp.setClickable(false);
-                sendotp.setTextColor(getResources().getColor(R.color.Red));
+                sendotp.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.Red));
                 Toast.makeText(VerifyActivity.this, "Sms Limit exceeded please try again later ", Toast.LENGTH_SHORT).show();
             }
 
@@ -168,6 +169,7 @@ public class VerifyActivity extends AppCompatActivity {
             // now need to ask the user to enter the code and then construct a credential
             // by combining the code with a verification ID.
             otp.setVisibility(View.VISIBLE);
+            verify.setVisibility(View.VISIBLE);
             Log.d("", "onCodeSent:" + verificationId);
             Toast.makeText(VerifyActivity.this, "code sent please wait", Toast.LENGTH_SHORT).show();
             msg.setText("Otp Sent!,waiting to Auto Detect Sms");
@@ -175,7 +177,6 @@ public class VerifyActivity extends AppCompatActivity {
             mcode = verificationId;
             mResendToken = token;
             Log.d("#otp = ",mcode);
-
             // ...
         }
     };
