@@ -11,14 +11,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
 import com.google.firebase.FirebaseException;
@@ -29,6 +27,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.concurrent.TimeUnit;
@@ -41,6 +41,9 @@ public class VerifyActivity extends AppCompatActivity {
     EditText phone,otp;
     Button verify;
     PhoneAuthProvider.ForceResendingToken mResendToken;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private RadioGroup rgroup;
+    public static String currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,11 +54,23 @@ public class VerifyActivity extends AppCompatActivity {
         sendotp = findViewById(R.id.textView2);
         avi=findViewById(R.id.aviverify);
         otp = findViewById(R.id.otp);
+        otp.setVisibility(View.INVISIBLE);
         verify = findViewById(R.id.vbutton);  //btn
+        verify.setVisibility(View.INVISIBLE);
         verify.setOnClickListener(verifyotp);
         avi.setVisibility(View.INVISIBLE);
         msg = findViewById(R.id.textView5);
         msg.setVisibility(View.INVISIBLE);
+        currentUser="User";
+        rgroup = findViewById(R.id.rgroup);
+        rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton checked = findViewById(checkedId);
+                currentUser = checked.getText().toString();
+                Toast.makeText(VerifyActivity.this, checked.getText().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
         if(FirebaseAuth.getInstance().getCurrentUser()!=null && getApplicationContext().getSharedPreferences("phonecache",MODE_PRIVATE).getString("phone","9423757172")!=null){
            startActivity(new Intent(VerifyActivity.this,PostLogin.class));
            finish();
@@ -131,10 +146,14 @@ public class VerifyActivity extends AppCompatActivity {
             if (e instanceof FirebaseAuthInvalidCredentialsException) {
                 // Invalid request
                 Toast.makeText(VerifyActivity.this, "Invalid request", Toast.LENGTH_SHORT).show();
+                otp.setVisibility(View.VISIBLE);
+                verify.setVisibility(View.VISIBLE);
 
             } else if (e instanceof FirebaseTooManyRequestsException) {
                 // The SMS quota for the project has been exceeded
                 msg.setText("OTP Request out of Service :( ");
+                sendotp.setClickable(false);
+                sendotp.setTextColor(getResources().getColor(R.color.Red));
                 Toast.makeText(VerifyActivity.this, "Sms Limit exceeded please try again later ", Toast.LENGTH_SHORT).show();
             }
 
@@ -148,7 +167,7 @@ public class VerifyActivity extends AppCompatActivity {
             // The SMS verification code has been sent to the provided phone number, we
             // now need to ask the user to enter the code and then construct a credential
             // by combining the code with a verification ID.
-
+            otp.setVisibility(View.VISIBLE);
             Log.d("", "onCodeSent:" + verificationId);
             Toast.makeText(VerifyActivity.this, "code sent please wait", Toast.LENGTH_SHORT).show();
             msg.setText("Otp Sent!,waiting to Auto Detect Sms");
@@ -174,13 +193,39 @@ public class VerifyActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences("phonecache",MODE_PRIVATE).edit();
                             editor.putString("phone",phone.getText().toString());
                             editor.commit();
-                            //if new user ask name else login
-                            Intent view = new Intent(VerifyActivity.this,NameActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putString("number",phone.getText().toString());
-                            view.putExtras(bundle);
-                            startActivity(view);
-                            finish();
+                            //if new user? ask name: else login;
+                            db.collection(currentUser)
+                                    .document(phone.getText().toString())
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            DocumentSnapshot doc = task.getResult();
+                                            if(doc.exists()){
+                                                Intent view = new Intent(VerifyActivity.this,PostLogin.class);
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString("number",phone.getText().toString());
+                                                view.putExtras(bundle);
+                                                startActivity(view);
+                                                finish();
+                                            }
+                                            else{
+                                                Intent view = new Intent(VerifyActivity.this,NameActivity.class);
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString("number",phone.getText().toString());
+                                                view.putExtras(bundle);
+                                                startActivity(view);
+                                                finish();
+                                            }
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(VerifyActivity.this, "Failed:" + e.getMessage(), Toast.LENGTH_LONG).show();
+                                    Log.d("error:",e.getMessage());
+                                }
+                            });
                         } else {
                             // Sign in failed, display a message and update the UI
                             avi.setVisibility(View.GONE);
@@ -188,6 +233,7 @@ public class VerifyActivity extends AppCompatActivity {
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
                                 Toast.makeText(VerifyActivity.this, "Invalid code :(", Toast.LENGTH_SHORT).show();
+                                verify.setVisibility(View.VISIBLE);
                             }
                         }
                     }
@@ -200,8 +246,7 @@ public class VerifyActivity extends AppCompatActivity {
         if (exit) {
             finish(); // finish activity
         } else {
-            Toast.makeText(this, "Press Back again to Exit.",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Press Back again to Exit.", Toast.LENGTH_SHORT).show();
             exit = true;
             new Handler().postDelayed(new Runnable() {
                 @Override

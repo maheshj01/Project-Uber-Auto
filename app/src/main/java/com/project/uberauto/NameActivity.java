@@ -60,13 +60,13 @@ public class NameActivity extends AppCompatActivity {
         phone = getApplicationContext().getSharedPreferences("phonecache",MODE_PRIVATE).getString("phone","9423757172");
         rgroup = findViewById(R.id.rgroup);
         status = true;
-        currentUser = "Users";
+        currentUser = "User";
         rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 RadioButton checked = findViewById(checkedId);
                 currentUser = checked.getText().toString();
-                Toast.makeText(NameActivity.this, checked.getText().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(NameActivity.this, checked.getText().toString() + "current user: "+ phone, Toast.LENGTH_SHORT).show();
             }
         });
         next.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +74,7 @@ public class NameActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(!first.getText().toString().isEmpty()&&!last.getText().toString().isEmpty()) {
                     avi.show();
-                    Toast.makeText(NameActivity.this, "lOGIN Success for "+phone, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NameActivity.this, "lOGIN Success for "+ phone, Toast.LENGTH_SHORT).show();
                     //registerUser(); // if register success
                         updateUser(first.getText().toString(),last.getText().toString());
                 }

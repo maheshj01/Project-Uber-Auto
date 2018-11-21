@@ -13,4 +13,5 @@
     <color name="BlueGray">#37474f</color>
     <color name="Gray">#424242</color>
     <color name="Black">#000</color>
+    <color name="Red">#f00</color>
 </resources>

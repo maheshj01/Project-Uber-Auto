@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+                xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/profilefrag"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,8 +13,16 @@
             android:layout_width="177dp"
             android:layout_height="162dp"
             android:src="@drawable/profile"
-            android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
             android:layout_marginTop="51dp"/>
+
+    <com.jaredrummler.materialspinner.MaterialSpinner
+            android:id="@+id/spinner"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Black"
+            android:layout_centerInParent="true"/>
 
     <Button
             android:id="@+id/logout"
@@ -32,8 +40,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
             android:textSize="22dp"
-            android:layout_marginTop="244dp"
-            android:id="@+id/textname"/>
+            android:id="@+id/name" android:layout_above="@+id/spinner"/>
+    <ImageView
+            android:src="@drawable/available"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/statusicon" android:layout_centerVertical="true" android:layout_alignParentEnd="true"
+            android:layout_marginEnd="57dp"/>
 </RelativeLayout>

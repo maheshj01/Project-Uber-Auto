@@ -140,6 +140,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mylocation.setOnClickListener(gotomylocation);
         direction = mapview.findViewById(R.id.directionbtn);
         direction.setOnClickListener(getDirections);
+        Log.d("User ----->",NameActivity.currentUser);
         return mapview;
     }
 
@@ -335,7 +336,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                             //     Log.d(TAG,"location found", );
                             Location currentLocation = (Location) task.getResult();
                             Log.d(NameActivity.currentUser + " ----------------->",phone);
-                            db.collection(NameActivity.currentUser)
+                            db.collection("Driver")
                                     .document(phone)
                                     .update("Lat",currentLocation.getLatitude(),"Lan",currentLocation.getLongitude())
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
