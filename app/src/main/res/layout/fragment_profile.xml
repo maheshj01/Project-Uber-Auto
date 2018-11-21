@@ -38,14 +38,14 @@
     <TextView
             android:text="TextView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="46dp"
             android:layout_centerHorizontal="true"
             android:textSize="22dp"
-            android:id="@+id/name" android:layout_above="@+id/spinner"/>
+            android:id="@+id/name" android:layout_alignParentTop="true" android:layout_marginTop="238dp"/>
     <ImageView
             android:src="@drawable/available"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/statusicon" android:layout_centerVertical="true" android:layout_alignParentEnd="true"
-            android:layout_marginEnd="57dp"/>
+            android:layout_marginEnd="75dp"/>
 </RelativeLayout>
