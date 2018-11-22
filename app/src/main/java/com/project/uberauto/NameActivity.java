@@ -1,5 +1,6 @@
 package com.project.uberauto;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -76,6 +77,11 @@ public class NameActivity extends AppCompatActivity {
                     avi.show();
                     Toast.makeText(NameActivity.this, "lOGIN Success for "+ phone, Toast.LENGTH_SHORT).show();
                     //registerUser(); // if register success
+                    SharedPreferences sharedPref = getSharedPreferences("DATA", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("shared_status",currentUser);
+                    editor.putString("shared_name",first.getText().toString() + " " + last.getText().toString());
+                    editor.commit();
                         updateUser(first.getText().toString(),last.getText().toString());
                 }
                 else{

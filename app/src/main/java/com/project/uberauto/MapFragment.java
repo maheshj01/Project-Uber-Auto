@@ -115,6 +115,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     SharedPreferences sharedPreferences;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String phone;
+    Button book ;
+   public TextView tvname;
+   public TextView tvphone;
     //    //private LocationClient
     // private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     @Override
@@ -137,6 +140,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return mapview;
         }
+        book= mapview.findViewById(R.id.button);
+        tvname = mapview.findViewById(R.id.drivername);
+        tvphone = mapview.findViewById(R.id.driverphone);
         phone = getContext().getSharedPreferences("phonecache",MODE_PRIVATE).getString("phone","9423757172");
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this); //You can also use LocationManager.GPS_PROVIDER and LocationManager.PASSIVE_PROVIDER
         mylocation = mapview.findViewById(R.id.mylocation);
@@ -315,7 +321,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                         if (task.isSuccessful()) {
                             //     Log.d(TAG,"location found", );
                             Location currentLocation = (Location) task.getResult();
-                            Log.d(NameActivity.currentUser + " ----------------->",phone);
                             db.collection("Driver")
                                     .document(phone)
                                     .update("Lat",currentLocation.getLatitude(),"Lan",currentLocation.getLongitude())
@@ -438,7 +443,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     }
 
     public void showNearBy(){
-        db.collection("User")
+        db.collection("Driver")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -449,10 +454,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                                     String lat = doc.getString("Lat");
                                     String lan = doc.getString("Lan");
                                     Log.d(doc.getString("First_Name") + doc.getString("Last_Name"),"------*****");
-                                   /* String phoneno = doc.getString("Phone_Number");
-                                    Toast.makeText(getContext(), "phone: " + phone , Toast.LENGTH_SHORT).show();*/
+                                   String phoneno = doc.getString("Phone_Number");
+                                   // Toast.makeText(getContext(), "phone: " + phone , Toast.LENGTH_SHORT).show();*/
                                    // Log.d("phone no---> ",phoneno);
-                                    mMap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(lat), Double.valueOf(lan))).title(phone)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.taxismall));
+                                    mMap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(lat), Double.valueOf(lan))).title(phoneno)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.taxismall));
                                 }
                             }
                         }else{
@@ -515,28 +520,31 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     public void show_card()
     {
         dcard.setContentView(R.layout.driver_dialog);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-     /*   db.collection("Users")
-                .document(doc)
+
+            tvname.setText("Lorem" + " " +"Ipsum");
+            tvphone.setText("8668284377");
+/*        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("Driver")
+                .document(Phoneno)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task){
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         Button book = mapview.findViewById(R.id.button);
-                        TextView name = mapview.findViewById(R.id.name);
-                        TextView phone = mapview.findViewById(R.id.phone);
+                        TextView tvname = mapview.findViewById(R.id.drivername);
+                        TextView tvphone = mapview.findViewById(R.id.driverphone);
                         DocumentSnapshot doc = task.getResult();
-                        if(doc.exists()){
-                            name.setText(doc.getString("First_Name") + " " +doc.getString("Lasr_Name"));
-                            phone.setText(doc.getString("Phone_Number"));
+                        if(task.isSuccessful()){
+                            tvname.setText("Mahesh" + " " +"Jamdade");
+                            tvphone.setText("8668284377");
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                Toast.makeText(getContext(), "Failure:" + e, Toast.LENGTH_LONG).show();
             }
-        });
-       */ dcard.show();
+        });*/
+        dcard.show();
     }
 }

@@ -73,8 +73,7 @@ public class VerifyActivity extends AppCompatActivity {
                 Toast.makeText(VerifyActivity.this, checked.getText().toString(), Toast.LENGTH_SHORT).show();
             }
         });
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null || sharedPref.getString("sharedphone","defvalue")!=null){
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null ){
            startActivity(new Intent(VerifyActivity.this,PostLogin.class));
            finish();
         }
@@ -196,10 +195,13 @@ public class VerifyActivity extends AppCompatActivity {
                            /* SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences("phonecache",MODE_PRIVATE).edit();
                             editor.putString("phone",phone.getText().toString());
                             editor.commit();*/
-                            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+
+                            SharedPreferences sharedPref = getSharedPreferences("DATA",Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPref.edit();
-                            editor.putString("sharedphone",phone.getText().toString());
+                            editor.putString("shared_phone",phone.getText().toString()).apply();
                             editor.commit();
+                            String temp=sharedPref.getString("shared_phone","null");
+                            Log.d("***************",temp);
                             //if new user? ask name: else login;
                             db.collection(currentUser)
                                     .document(phone.getText().toString())

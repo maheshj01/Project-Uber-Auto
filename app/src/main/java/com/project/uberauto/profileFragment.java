@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.jaredrummler.materialspinner.MaterialSpinner;
+import com.wang.avi.AVLoadingIndicatorView;
 
 public class profileFragment extends Fragment {
     Button logout;
@@ -35,6 +36,8 @@ public class profileFragment extends Fragment {
     TextView profilename;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     SessionManager session;
+    AVLoadingIndicatorView avi;
+    String CurrentUser,phoneno;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,61 +51,71 @@ public class profileFragment extends Fragment {
         logout = view.findViewById(R.id.logout);
         MaterialSpinner spinner = (MaterialSpinner)view.findViewById(R.id.spinner);
         spinner.setSelectedIndex(1);
+        status = view.findViewById(R.id.statusicon);
         profilename = view.findViewById(R.id.name);
+        final SharedPreferences sharedPref = getActivity().getSharedPreferences("DATA",Context.MODE_PRIVATE);
+        String sname=sharedPref.getString("shared_name","null");
+        CurrentUser=sharedPref.getString("shared_status","null");
+        phoneno = sharedPref.getString("shared_phone",null);
+        profilename.setText(sname);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mAuth = FirebaseAuth.getInstance();
-                FirebaseAuth.AuthStateListener listener = new FirebaseAuth.AuthStateListener() {
-                    @Override
-                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                      if(mAuth.getCurrentUser()==null){ // user not signed in
-                          Toast.makeText(getContext(), "auth state changed logged out", Toast.LENGTH_SHORT).show();
-                           startActivity(new Intent(getContext(),VerifyActivity.class));
-                      }
-                      else{  // already signed in
-                          Toast.makeText(getContext(), "user already signed in", Toast.LENGTH_SHORT).show();
-                      }
-                    }
-                };
-                mAuth.addAuthStateListener(listener);
                 mAuth.signOut();
+                if(mAuth.getCurrentUser()==null){
+                    Toast.makeText(getContext(), "Logout Success", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getContext(),VerifyActivity.class));
+                    SharedPreferences.Editor edit = sharedPref.edit();
+                    edit.clear();
+                    edit.commit();
+                }
+                else{
+                    Toast.makeText(getContext(), "Logout failed", Toast.LENGTH_SHORT).show();
+                }
             }
         });
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        profilename.setText(sharedPref.getString("sharedphone","defvalue"));
-        /*        db.collection("Users")
-                .document(session.get("sharedphone").toString())
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        if(CurrentUser.equalsIgnoreCase("Driver")) {
+            spinner.setItems("Available", "Running", "Offline");
+            spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+                @Override
+                public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                    // update driver status to firebase
+                    if (item == "Available") {
+                        status.setImageDrawable(getResources().getDrawable(R.drawable.available));
+                        updateStatus(item);
+                    } else if (item == "Running") {
+                        status.setImageDrawable(getResources().getDrawable(R.drawable.running));
+                        updateStatus(item);
+                    } else if (item == "Offline") {
+                        status.setImageDrawable(getResources().getDrawable(R.drawable.offline));
+                        updateStatus(item);
+                    }
+                }
+            });
+        }
+        else{
+            status.setVisibility(View.INVISIBLE);
+            spinner.setVisibility(View.INVISIBLE);
+        }
+        return view;
+    }
+
+    public void updateStatus(String item){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(CurrentUser)
+                .document(phoneno)
+                .update("Status",item)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                   profilename.setText(documentSnapshot.getString("First_Name")+ " " + documentSnapshot.getString("Last_Name"));
+                    public void onSuccess(Void aVoid) {
+                        Snackbar.make(view, "Driver Status Updated", Snackbar.LENGTH_LONG).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
-            }
-        });*/
-        status = view.findViewById(R.id.statusicon);
-        spinner.setItems("Available","Running","Offline");
-        spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
-            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-                Snackbar.make(view, "Clicked " + item, Snackbar.LENGTH_LONG).show();
-                // update driver status to firebase
-                if(item=="Available"){
-                    status.setImageDrawable(getResources().getDrawable(R.drawable.available));
-                }
-                else if(item =="Running" ){
-                    status.setImageDrawable(getResources().getDrawable(R.drawable.running));
-                }
-                else if(item == "Offline"){
-                    status.setImageDrawable(getResources().getDrawable(R.drawable.offline));
-                }
+                Snackbar.make(view, "Failure: " + e, Snackbar.LENGTH_LONG).show();
             }
         });
-
-        return view;
     }
 }
