@@ -520,9 +520,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     public void show_card()
     {
         dcard.setContentView(R.layout.driver_dialog);
-
-            tvname.setText("Lorem" + " " +"Ipsum");
-            tvphone.setText("8668284377");
 /*        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Driver")
                 .document(Phoneno)
