@@ -20,7 +20,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -519,7 +521,20 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
 
     public void show_card()
     {
-        dcard.setContentView(R.layout.driver_dialog);
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        Bundle b=new Bundle();
+        b.putString("name","mahesh JH");
+        MyCustomDialogFragment md=new MyCustomDialogFragment();
+        md.setArguments(b);
+        DialogFragment dialogFragment =md;
+        dialogFragment.show(ft, "dialog");
+       // dcard.setContentView(R.layout.driver_dialog);
 /*        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Driver")
                 .document(Phoneno)
@@ -542,6 +557,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                 Toast.makeText(getContext(), "Failure:" + e, Toast.LENGTH_LONG).show();
             }
         });*/
-        dcard.show();
+      //  dcard.show();
     }
 }
