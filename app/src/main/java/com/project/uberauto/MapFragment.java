@@ -412,8 +412,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Toast.makeText(getContext(), "MARKER CLICKED", Toast.LENGTH_SHORT).show();
-                show_card();
+               // Toast.makeText(getContext(), "MARKER CLICKED "+marker.getTitle(), Toast.LENGTH_SHORT).show();
+                if(!marker.getTitle().equalsIgnoreCase("Destination")) {
+                    show_card(marker.getTitle());
+                }
                 return false;
             }
         });
@@ -520,7 +522,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         Toast.makeText(getContext(), "Icon clicked", Toast.LENGTH_SHORT).show();
     }
 
-    public void show_card()
+    public void show_card(String marker_title)
     {
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -530,13 +532,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         }
         ft.addToBackStack(null);
         Bundle b=new Bundle();
-        b.putString("name","mahesh JH");
+        b.putString("title",marker_title);
         MyCustomDialogFragment md=new MyCustomDialogFragment();
         md.setArguments(b);
         DialogFragment dialogFragment =md;
         dialogFragment.show(ft, "dialog");
        // dcard.setContentView(R.layout.driver_dialog);
-/*        FirebaseFirestore db = FirebaseFirestore.getInstance();
+/*      FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Driver")
                 .document(Phoneno)
                 .get()

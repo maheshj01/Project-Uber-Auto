@@ -19,7 +19,8 @@
                 android:gravity="center"
                 android:textSize="20dp"
                 android:textColor="@color/Black"
-                android:layout_alignStart="@+id/driverphone" android:layout_above="@+id/driverphone"/>
+                android:layout_alignParentTop="true" android:layout_marginTop="13dp"
+                android:layout_alignStart="@+id/driverphone"/>
 
         <TextView
                 android:id="@+id/driverphone"
@@ -29,8 +30,8 @@
                 android:gravity="center"
                 android:textSize="20dp"
                 android:textColor="@color/Black" android:layout_alignParentStart="true"
-                android:layout_marginStart="42dp"
-                android:layout_alignBottom="@+id/button"/>
+                android:layout_marginStart="27dp"
+                android:layout_alignParentBottom="true" android:layout_marginBottom="15dp"/>
 
         <Button
                 android:id="@+id/button"
