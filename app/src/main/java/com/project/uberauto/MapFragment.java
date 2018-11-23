@@ -533,7 +533,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         polylines.clear();
     }
 
-
     @Override
     public void onInfoWindowClick(Marker marker) {
         //Snackbar.make(View,"Icon Clicked",Snackbar.LENGTH_LONG);

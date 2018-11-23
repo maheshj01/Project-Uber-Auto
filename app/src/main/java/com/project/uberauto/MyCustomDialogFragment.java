@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +36,7 @@ public class MyCustomDialogFragment extends DialogFragment {
     public TextView tvname;
     public TextView tvphone;
     public Button book_now;
+    String driver_name;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.driver_dialog, container, false);
@@ -47,6 +50,7 @@ public class MyCustomDialogFragment extends DialogFragment {
         final String dest_lat = getArguments().getString("destination_lat");
         final String dest_lan = getArguments().getString("destination_lan");
         final Boolean destination_marked = this.getArguments().getBoolean("destination_marked");
+        final SharedPreferences sharedPref = getActivity().getSharedPreferences("DATA", Context.MODE_PRIVATE);
         tvphone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +67,8 @@ public class MyCustomDialogFragment extends DialogFragment {
                 }
                 else{
                     Map<String, Object> data = new HashMap<String, Object>();
+                    data.put("User_name",sharedPref.getString("shared_name","null"));
+                    data.put("Driver_name",driver_name);
                     data.put("Source_Lat",source_lat);
                     data.put("Source_Lan",source_lan);
                     data.put("TimeStamp", FieldValue.serverTimestamp());
@@ -75,6 +81,11 @@ public class MyCustomDialogFragment extends DialogFragment {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.d( "onSuccess: ","Request Submitted");
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            HomeFragment home = new HomeFragment();
+                            ft.replace(R.id.frame_container,home);
+                            ft.addToBackStack(null);
+                            ft.commit();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -85,7 +96,7 @@ public class MyCustomDialogFragment extends DialogFragment {
                 }
             }
         });
-        SharedPreferences sharedPref = getActivity().getSharedPreferences("DATA", Context.MODE_PRIVATE);
+
         String sphone = sharedPref.getString("shared_phone","null");
         if(sphone!=null) {
             db.collection("Driver")
@@ -96,14 +107,15 @@ public class MyCustomDialogFragment extends DialogFragment {
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             DocumentSnapshot doc = task.getResult();
                             if(task.isSuccessful()) {
-                                tvname.setText(doc.getString("First_Name") + " " + doc.getString("Last_Name"));
+                                driver_name=doc.getString("First_Name") + " " + doc.getString("Last_Name");
+                                tvname.setText(driver_name);
                                 tvphone.setText(doc.getString("Phone_Number"));
                             }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-
+                    Toast.makeText(getContext(), "Exception :" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
 
