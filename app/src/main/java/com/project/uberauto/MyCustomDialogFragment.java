@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MyCustomDialogFragment extends DialogFragment {
     @Override
@@ -36,6 +42,10 @@ public class MyCustomDialogFragment extends DialogFragment {
         tvphone = v.findViewById(R.id.driverphone);
         book_now = v.findViewById(R.id.booknow);
         final String title=this.getArguments().getString("title");
+        final String source_lat = getArguments().getString("source_lat");
+        final String source_lan = getArguments().getString("source_lan");
+        final String dest_lat = getArguments().getString("destination_lat");
+        final String dest_lan = getArguments().getString("destination_lan");
         final Boolean destination_marked = this.getArguments().getBoolean("destination_marked");
         tvphone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,7 +62,26 @@ public class MyCustomDialogFragment extends DialogFragment {
                     Toast.makeText(getContext(), "Choose destination on Map", Toast.LENGTH_LONG).show();
                 }
                 else{
-                    Toast.makeText(getContext(), "Suceess All set", Toast.LENGTH_SHORT).show();
+                    Map<String, Object> data = new HashMap<String, Object>();
+                    data.put("Source_Lat",source_lat);
+                    data.put("Source_Lan",source_lan);
+                    data.put("TimeStamp", FieldValue.serverTimestamp());
+                    data.put("Destination_Lat",dest_lat);
+                    data.put("Destination_Lan",dest_lan);
+                    Toast.makeText(getContext(), "Success All set", Toast.LENGTH_SHORT).show();
+                    db.collection("Requests")
+                            .document()
+                            .set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d( "onSuccess: ","Request Submitted");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Failed: ",e.getMessage());
+                        }
+                    });
                 }
             }
         });

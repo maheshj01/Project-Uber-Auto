@@ -93,7 +93,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     View mapview;
     private GoogleMap mMap;
     GoogleApiClient googleapiclient;
-    Location mlocation;
+    public Location mlocation;    //mylocation
     private FusedLocationProviderClient mFusedLocationProviderClient;
     LocationRequest mlocationequest;
     private Boolean mLocationPermissionsGranted = true;
@@ -115,7 +115,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     private static final int[] COLORS = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary, R.color.light_blue_500, R.color.purple_500, R.color.primary_dark_material_light};
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     Button direction;
-    SharedPreferences sharedPreferences;
+    SharedPreferences sharedPref;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String phone;
     Button book ;
@@ -153,6 +153,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         mylocation.setOnClickListener(gotomylocation);
         direction = mapview.findViewById(R.id.directionbtn);
         direction.setOnClickListener(getDirections);
+        sharedPref = getActivity().getSharedPreferences("DATA",Context.MODE_PRIVATE);
         return mapview;
     }
 
@@ -347,12 +348,34 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("Location Changed","");
+        Toast.makeText(getContext(), "Location Changed", Toast.LENGTH_SHORT).show();
         mlocation = location;
+        String phoneno = sharedPref.getString("shared_phone",null);
+        String CurrentUser=sharedPref.getString("shared_status","null");
+        if(phoneno!=null && CurrentUser.equalsIgnoreCase("Driver") ) {
+            updateLocation(phoneno,location);
+        }
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
         mMap.animateCamera(cameraUpdate);
         locationManager.removeUpdates(this);
+    }
+
+    public void updateLocation(String doc,Location location){
+    db.collection("Driver")
+            .document(doc)
+            .update("Lat",String.valueOf(location.getLatitude()),"Lan",String.valueOf(location.getLongitude()))
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Log.d("Driver Location"," Updated to firebase");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+        @Override
+        public void onFailure(@NonNull Exception e) {
+            Toast.makeText(getContext(), "failed to update location: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    });
     }
 
     @Override
@@ -383,14 +406,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
             getDeviceLocation();
             init();
         }
-        showNearBy();
+        if(sharedPref.getString("shared_status",null).equalsIgnoreCase("User")) { // if user in show driver
+            showNearBy();
+        }
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 if (mPreviousMarker != null) {
                     mPreviousMarker.remove();
                     mPreviousMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Destination"));
-                    Log.d(latLng.toString()," latlng");
+                  //  Toast.makeText(getContext(), mPreviousMarker.getSnippet(), Toast.LENGTH_LONG).show();
                 }
                 else
                     mPreviousMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Destination"));
@@ -403,9 +428,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                // Toast.makeText(getContext(), "MARKER CLICKED "+marker.getTitle(), Toast.LENGTH_SHORT).show();
                 if(!marker.getTitle().equalsIgnoreCase("Destination")) {
                     if(mPreviousMarker !=null)  // destination is marked
-                    show_card(marker.getTitle(),true);
+                    show_card(marker.getTitle(),true,mlocation,mPreviousMarker);
                     else
-                        show_card(marker.getTitle(),false);
+                        show_card(marker.getTitle(),false,mlocation,mPreviousMarker);
                 }else
                     mPreviousMarker.getSnippet();
 
@@ -515,7 +540,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         Toast.makeText(getContext(), "Icon clicked", Toast.LENGTH_SHORT).show();
     }
 
-    public void show_card(String marker_title,Boolean destination_marked)
+    public void show_card(String marker_title,Boolean destination_marked,Location source,Marker destination)
     {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
@@ -526,33 +551,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         Bundle b=new Bundle();
         b.putString("title",marker_title);
         b.putBoolean("destination_marked",destination_marked);
+        b.putString("source_lat",String.valueOf(source.getLatitude()));
+        b.putString("source_lan",String.valueOf(source.getLongitude()));
+        b.putString("destination_lat",String.valueOf(destination.getPosition().latitude));
+        b.putString("destination_lan",String.valueOf(destination.getPosition().longitude));
         MyCustomDialogFragment md=new MyCustomDialogFragment();
         md.setArguments(b);
         DialogFragment dialogFragment = md;
         dialogFragment.show(ft, "dialog");
-       // dcard.setContentView(R.layout.driver_dialog);
-/*      FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("Driver")
-                .document(Phoneno)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        Button book = mapview.findViewById(R.id.button);
-                        TextView tvname = mapview.findViewById(R.id.drivername);
-                        TextView tvphone = mapview.findViewById(R.id.driverphone);
-                        DocumentSnapshot doc = task.getResult();
-                        if(task.isSuccessful()){
-                            tvname.setText("Mahesh" + " " +"Jamdade");
-                            tvphone.setText("8668284377");
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Failure:" + e, Toast.LENGTH_LONG).show();
-            }
-        });*/
-      //  dcard.show();
     }
 }

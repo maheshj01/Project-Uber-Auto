@@ -191,10 +191,6 @@ public class VerifyActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("", "signInWithCredential:success");
                             Toast.makeText(VerifyActivity.this, "Verification Success", Toast.LENGTH_SHORT).show();
-                           /* SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences("phonecache",MODE_PRIVATE).edit();
-                            editor.putString("phone",phone.getText().toString());
-                            editor.commit();*/
-
                             SharedPreferences sharedPref = getSharedPreferences("DATA",Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPref.edit();
                             editor.putString("shared_phone",phone.getText().toString()).apply();

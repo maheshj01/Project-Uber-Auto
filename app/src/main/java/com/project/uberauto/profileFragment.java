@@ -35,7 +35,6 @@ public class profileFragment extends Fragment {
     ImageView status;
     TextView profilename;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    SessionManager session;
     AVLoadingIndicatorView avi;
     String CurrentUser,phoneno;
     @Override
