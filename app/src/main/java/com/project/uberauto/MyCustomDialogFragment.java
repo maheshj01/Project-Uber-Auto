@@ -81,11 +81,11 @@ public class MyCustomDialogFragment extends DialogFragment {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.d( "onSuccess: ","Request Submitted");
-                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                           /* FragmentTransaction ft = getFragmentManager().beginTransaction();
                             HomeFragment home = new HomeFragment();
                             ft.replace(R.id.frame_container,home);
                             ft.addToBackStack(null);
-                            ft.commit();
+                            ft.commit();*/
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
