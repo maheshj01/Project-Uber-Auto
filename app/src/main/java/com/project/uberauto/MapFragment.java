@@ -102,6 +102,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     private static final long MIN_TIME = 400;
     private static final float MIN_DISTANCE = 1000;
     private Marker mPreviousMarker;
+    private Location currentLocation;
     private AutoCompleteTextView msearchtext;
     private static final String TAG = "Map";
     private static final int ERROR_DIALOG_REQUEST = 9001;
@@ -142,7 +143,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return mapview;
         }
-        book= mapview.findViewById(R.id.button);
+        book= mapview.findViewById(R.id.booknow);
         tvname = mapview.findViewById(R.id.drivername);
         tvphone = mapview.findViewById(R.id.driverphone);
         phone = getContext().getSharedPreferences("phonecache",MODE_PRIVATE).getString("phone","9423757172");
@@ -173,7 +174,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                             Toast.makeText(getContext(), "location permission required", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        Location currentLocation = (Location) task.getResult();
+                        currentLocation = (Location) task.getResult();
                         moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
                     } else {
                         //    Log.d(TAG,"CURRENT LOCATION IS ",);
@@ -321,23 +322,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
-                            //     Log.d(TAG,"location found", );
-                            Location currentLocation = (Location) task.getResult();
-                            db.collection("Driver")
-                                    .document(phone)
-                                    .update("Lat",currentLocation.getLatitude(),"Lan",currentLocation.getLongitude())
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Toast.makeText(getContext(), "location Update success", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getContext(), "Failed to update location", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            currentLocation = (Location) task.getResult();
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
+                            Toast.makeText(getContext(), "Location fetched", Toast.LENGTH_SHORT).show();
                         } else {
                             //    Log.d(TAG,"CURRENT LOCATION IS ",);
                             Toast.makeText(getContext(), "unable to get current location", Toast.LENGTH_SHORT).show();
@@ -360,6 +347,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d("Location Changed","");
         mlocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
@@ -414,8 +402,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
             public boolean onMarkerClick(Marker marker) {
                // Toast.makeText(getContext(), "MARKER CLICKED "+marker.getTitle(), Toast.LENGTH_SHORT).show();
                 if(!marker.getTitle().equalsIgnoreCase("Destination")) {
-                    show_card(marker.getTitle());
-                }
+                    if(mPreviousMarker !=null)  // destination is marked
+                    show_card(marker.getTitle(),true);
+                    else
+                        show_card(marker.getTitle(),false);
+                }else
+                    mPreviousMarker.getSnippet();
+
                 return false;
             }
         });
@@ -522,9 +515,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         Toast.makeText(getContext(), "Icon clicked", Toast.LENGTH_SHORT).show();
     }
 
-    public void show_card(String marker_title)
+    public void show_card(String marker_title,Boolean destination_marked)
     {
-
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
         if (prev != null) {
@@ -533,9 +525,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         ft.addToBackStack(null);
         Bundle b=new Bundle();
         b.putString("title",marker_title);
+        b.putBoolean("destination_marked",destination_marked);
         MyCustomDialogFragment md=new MyCustomDialogFragment();
         md.setArguments(b);
-        DialogFragment dialogFragment =md;
+        DialogFragment dialogFragment = md;
         dialogFragment.show(ft, "dialog");
        // dcard.setContentView(R.layout.driver_dialog);
 /*      FirebaseFirestore db = FirebaseFirestore.getInstance();

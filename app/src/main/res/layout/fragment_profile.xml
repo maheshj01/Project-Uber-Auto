@@ -47,6 +47,6 @@
             android:src="@drawable/available"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/statusicon" android:layout_centerVertical="true" android:layout_alignParentEnd="true"
-            android:layout_marginEnd="75dp"/>
+            android:id="@+id/statusicon" android:layout_alignParentEnd="true"
+            android:layout_marginEnd="79dp" android:layout_alignParentTop="true" android:layout_marginTop="293dp"/>
 </RelativeLayout>

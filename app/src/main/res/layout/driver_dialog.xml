@@ -19,8 +19,8 @@
                 android:gravity="center"
                 android:textSize="20dp"
                 android:textColor="@color/Black"
-                android:layout_alignParentTop="true" android:layout_marginTop="13dp"
-                android:layout_alignStart="@+id/driverphone"/>
+                android:layout_alignParentTop="true" android:layout_marginTop="14dp"
+                android:layout_alignParentStart="true" android:layout_marginStart="17dp"/>
 
         <TextView
                 android:id="@+id/driverphone"
@@ -29,17 +29,17 @@
                 android:text="TextView"
                 android:gravity="center"
                 android:textSize="20dp"
-                android:textColor="@color/Black" android:layout_alignParentStart="true"
-                android:layout_marginStart="27dp"
-                android:layout_alignParentBottom="true" android:layout_marginBottom="15dp"/>
+                android:textColor="@color/Black"
+                android:layout_alignParentBottom="true" android:layout_marginBottom="14dp"
+                android:layout_alignStart="@+id/drivername"/>
 
         <Button
-                android:id="@+id/button"
+                android:id="@+id/booknow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="22dp"
+                android:layout_marginEnd="17dp"
                 android:text="Book Now"
                 android:textColor="@color/white"/>
     </RelativeLayout>

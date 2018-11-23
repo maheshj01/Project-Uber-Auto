@@ -150,7 +150,6 @@ public class VerifyActivity extends AppCompatActivity {
                 Toast.makeText(VerifyActivity.this, "Invalid request", Toast.LENGTH_SHORT).show();
                 otp.setVisibility(View.VISIBLE);
                 verify.setVisibility(View.VISIBLE);
-
             } else if (e instanceof FirebaseTooManyRequestsException) {
                 // The SMS quota for the project has been exceeded
                 msg.setText("OTP Request out of Service :( ");
