@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ public class VerifyActivity extends AppCompatActivity {
     String mcode;
     TextView sendotp,skip,msg;
     EditText phone,otp;
+    TextInputLayout otpinput;
     Button verify;
     PhoneAuthProvider.ForceResendingToken mResendToken;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -55,9 +57,10 @@ public class VerifyActivity extends AppCompatActivity {
         phone = findViewById(R.id.phone);
         skip=findViewById(R.id.skip);
         sendotp = findViewById(R.id.textView2);
+        otpinput = findViewById(R.id.otpinput);
         avi=findViewById(R.id.aviverify);
         otp = findViewById(R.id.otp);
-        otp.setVisibility(View.INVISIBLE);
+        otpinput.setVisibility(View.INVISIBLE);
         verify = findViewById(R.id.vbutton);  //btn
         verify.setVisibility(View.INVISIBLE);
         verify.setOnClickListener(verifyotp);
@@ -150,7 +153,7 @@ public class VerifyActivity extends AppCompatActivity {
             if (e instanceof FirebaseAuthInvalidCredentialsException) {
                 // Invalid request
                 Toast.makeText(VerifyActivity.this, "Invalid request", Toast.LENGTH_SHORT).show();
-                otp.setVisibility(View.VISIBLE);
+                otpinput.setVisibility(View.VISIBLE);
                 verify.setVisibility(View.VISIBLE);
             } else if (e instanceof FirebaseTooManyRequestsException) {
                 // The SMS quota for the project has been exceeded
@@ -170,7 +173,7 @@ public class VerifyActivity extends AppCompatActivity {
             // The SMS verification code has been sent to the provided phone number, we
             // now need to ask the user to enter the code and then construct a credential
             // by combining the code with a verification ID.
-            otp.setVisibility(View.VISIBLE);
+            otpinput.setVisibility(View.VISIBLE);
             verify.setVisibility(View.VISIBLE);
             Log.d("", "onCodeSent:" + verificationId);
             Toast.makeText(VerifyActivity.this, "code sent please wait", Toast.LENGTH_SHORT).show();

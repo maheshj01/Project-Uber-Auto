@@ -120,7 +120,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String phone;
     Button book ;
-    TextView tvdistance,tvduration;
    public TextView tvname;
    public TextView tvphone;
     //    //private LocationClient
@@ -145,8 +144,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return mapview;
         }
-        tvdistance = mapview.findViewById(R.id.distance_info);
-        tvduration = mapview.findViewById(R.id.duration_info);
         book= mapview.findViewById(R.id.booknow);
         tvname = mapview.findViewById(R.id.drivername);
         tvphone = mapview.findViewById(R.id.driverphone);
@@ -294,8 +291,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                                 String duration = durationInfo.getText();
                                 List<Step> list = leg.getStepList();
                                 Log.d(distance + " ",duration);
-                                tvdistance.setText(distance);
-                                tvduration.setText(duration);
                                  if (status.equals(RequestResult.OK)) {
                                     ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
                                     PolylineOptions polylineOptions = DirectionConverter.createPolyline(getContext(), directionPositionList, 4,getResources().getColor(R.color.blue_500));
