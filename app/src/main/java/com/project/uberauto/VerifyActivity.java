@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -91,6 +92,7 @@ public class VerifyActivity extends AppCompatActivity {
                 msg.setVisibility(View.VISIBLE);
                 avi.show();
                 sendOtp(phone.getText().toString());
+                hideKeyboard(getApplicationContext(),getCurrentFocus());
             }
             else{
                 Toast.makeText(VerifyActivity.this, "enter 10 digit phone no", Toast.LENGTH_SHORT).show();
@@ -242,6 +244,11 @@ public class VerifyActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public static void hideKeyboard(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private Boolean exit = false;
