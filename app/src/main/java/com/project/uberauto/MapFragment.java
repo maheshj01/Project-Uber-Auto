@@ -47,6 +47,7 @@ import com.akexorcist.googledirection.constant.AvoidType;
 import com.akexorcist.googledirection.constant.RequestResult;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Step;
 import com.akexorcist.googledirection.util.DirectionConverter;
@@ -119,6 +120,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     String phone;
     Button book ;
+    TextView tvdistance,tvduration;
    public TextView tvname;
    public TextView tvphone;
     //    //private LocationClient
@@ -143,6 +145,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return mapview;
         }
+        tvdistance = mapview.findViewById(R.id.distance_info);
+        tvduration = mapview.findViewById(R.id.duration_info);
         book= mapview.findViewById(R.id.booknow);
         tvname = mapview.findViewById(R.id.drivername);
         tvphone = mapview.findViewById(R.id.driverphone);
@@ -269,8 +273,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
             final LatLng dest = new LatLng(mPreviousMarker.getPosition().latitude, mPreviousMarker.getPosition().longitude);
             final LatLng origin = new LatLng(mlocation.getLatitude(), mlocation.getLongitude());
             Log.d("origin=" + origin.latitude + " " + origin.longitude,"destination" + dest.latitude + " " + dest.longitude);
-            /*LatLng origin = new LatLng(37.7849569, -122.4068855);
-            LatLng dest= new LatLng(37.7814432, -122.4460177);*/
             GoogleDirection.withServerKey("AIzaSyB_FOWftbNi8uXdXXOJmrb0Y_MBqykux7E")//AIzaSyD0A9AV_LSOWyVaeJ1bMWiQUQtoH5Kb5aU")
                     .from(origin)
                     .to(dest)
@@ -285,8 +287,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
                                 String status = direction.getStatus();
                                 com.akexorcist.googledirection.model.Route route = direction.getRouteList().get(0);
                                 Leg leg = route.getLegList().get(0);
+                                ArrayList<LatLng> sectionList = leg.getSectionPoint();
+                                Info distanceInfo = leg.getDistance();
+                                Info durationInfo = leg.getDuration();
+                                String distance = distanceInfo.getText();
+                                String duration = durationInfo.getText();
                                 List<Step> list = leg.getStepList();
-                                if (status.equals(RequestResult.OK)) {
+                                Log.d(distance + " ",duration);
+                                tvdistance.setText(distance);
+                                tvduration.setText(duration);
+                                 if (status.equals(RequestResult.OK)) {
                                     ArrayList<LatLng> directionPositionList = leg.getDirectionPoint();
                                     PolylineOptions polylineOptions = DirectionConverter.createPolyline(getContext(), directionPositionList, 4,getResources().getColor(R.color.blue_500));
                                     mMap.addPolyline(polylineOptions);

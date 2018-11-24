@@ -56,6 +56,24 @@
             android:layout_marginStart="48dp"
             android:layout_marginBottom="98dp"
             android:text="Get Directions" />
+        <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:textSize="20dp"
+                android:layout_marginTop="82dp"
+                android:id="@+id/distance_info"
+                android:layout_alignEnd="@+id/mylocation"/>
+        <TextView
+                android:text="TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/duration_info"
+                android:textSize="20dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignEnd="@+id/mylocation"
+                android:layout_marginTop="122dp"/>
 
     </RelativeLayout>
 
