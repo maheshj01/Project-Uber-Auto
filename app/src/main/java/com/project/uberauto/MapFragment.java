@@ -113,7 +113,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnInfoWindowClick
     private List<Polyline> polylines;
     private static final int REQUEST_CODE_PERMISSION = 2;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(-40, -168), new LatLng(71, 136));
-    private static final int[] COLORS = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary, R.color.light_blue_500, R.color.purple_500, R.color.primary_dark_material_light};
+    private static final int[] COLORS = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary, R.color.light_blue_500, R.color.purple_500, R.color.colorPrimary};
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     Button direction;
     SharedPreferences sharedPref;
